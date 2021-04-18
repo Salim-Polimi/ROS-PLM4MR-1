@@ -1,9 +1,6 @@
-
 #include "ros/ros.h"
-#include "geometry_msgs/Vector3Stamped.h"
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
-#include <message_filters/sync_policies/exact_time.h>
 #include <message_filters/sync_policies/approximate_time.h>
 #include <msg_filter/MotorSpeed.h>
 

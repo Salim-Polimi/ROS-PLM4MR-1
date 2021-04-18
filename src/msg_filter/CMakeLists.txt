@@ -51,12 +51,11 @@ include_directories(
 )
 
 add_executable(msg_filter src/msg_filter_sub.cpp)
-add_dependencies(msg_filter msg_filter_generate_messages_cpp)
-
-add_executable(filter_subscriber_policy src/msg_filter_sub.cpp)
-target_link_libraries(filter_subscriber_policy ${catkin_LIBRARIES})
-
 target_link_libraries(msg_filter ${catkin_LIBRARIES})
+
+
+
+
 
 
 
