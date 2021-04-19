@@ -12,7 +12,6 @@ void PubSubNode<nav_msgs::Odometry, msg_filter::SpeedAndOdom>::subCallback(const
 {
 	//ROS_INFO ("Received: (%f) and (%f) and (%f) and (%f)",  receivedMsg->rpm_fl,  receivedMsg->rpm_fr,  receivedMsg->rpm_rl,  receivedMsg->rpm_rr);
 	//double omega_z;
-	//double Vl;
 	//double Vr;
 	//double y0;
 	//omega_z = receivedMsg->odom.twist.twist.angular.z;
