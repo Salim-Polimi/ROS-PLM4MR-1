@@ -4,6 +4,7 @@ project(msg_filter)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
+  nav_msgs
   message_generation
   message_filters
 )
@@ -12,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
     MotorSpeed.msg
+    SpeedAndOdom.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -31,6 +33,7 @@ add_message_files(
 generate_messages(
   DEPENDENCIES
     std_msgs
+    nav_msgs
 )
 
 
@@ -40,6 +43,7 @@ catkin_package(
 
 CATKIN_DEPENDS
     std_msgs
+    nav_msgs
     message_runtime
     message_filters
 )
@@ -50,12 +54,5 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(msg_filter src/msg_filter_sub.cpp)
+add_executable(msg_filter src/msg_filter.cpp)
 target_link_libraries(msg_filter ${catkin_LIBRARIES})
-
-
-
-
-
-
-
