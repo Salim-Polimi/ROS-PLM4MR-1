@@ -14,7 +14,7 @@ void callback(const msg_filter::MotorSpeed::ConstPtr& msg1_speed,
               const msg_filter::MotorSpeed::ConstPtr& msg3_speed,
               const msg_filter::MotorSpeed::ConstPtr& msg4_speed,
               const nav_msgs::Odometry::ConstPtr& msg5_odom) {
-  // ROS_INFO ("Received: (%f) and (%f) and (%f) and (%f)",  msg1_speed->rpm,  msg2_speed->rpm,  msg3_speed->rpm,  msg4_speed->rpm);
+   ROS_INFO ("Received: (%f) and (%f) and (%f) and (%f)",  msg1_speed->rpm,  msg2_speed->rpm,  msg3_speed->rpm,  msg4_speed->rpm);
   msg_filter::SpeedAndOdom SyncMsg;
   SyncMsg.rpm_fl = msg1_speed->rpm;
   SyncMsg.rpm_fr = msg2_speed->rpm;
