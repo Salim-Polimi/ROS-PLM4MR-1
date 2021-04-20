@@ -16,6 +16,7 @@ void callback(const msg_filter::MotorSpeed::ConstPtr& msg1_speed,
               const nav_msgs::Odometry::ConstPtr& msg5_odom) {
    ROS_INFO ("Received: (%f) and (%f) and (%f) and (%f)",  msg1_speed->rpm,  msg2_speed->rpm,  msg3_speed->rpm,  msg4_speed->rpm);
   msg_filter::SpeedAndOdom SyncMsg;
+  SyncMsg.header = msg1_speed->header;
   SyncMsg.rpm_fl = msg1_speed->rpm;
   SyncMsg.rpm_fr = msg2_speed->rpm;
   SyncMsg.rpm_rl = msg3_speed->rpm;
@@ -31,7 +32,7 @@ int main(int argc, char** argv) {
   ros::NodeHandle n;
 
   chatter_pub = n.advertise<msg_filter::SpeedAndOdom>("sync_msgs", 1000);
-  
+
   message_filters::Subscriber<msg_filter::MotorSpeed> sub1(n, "motor_speed_fl", 1);
   message_filters::Subscriber<msg_filter::MotorSpeed> sub2(n, "motor_speed_fr", 1);
   message_filters::Subscriber<msg_filter::MotorSpeed> sub3(n, "motor_speed_rl", 1);
