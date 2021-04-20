@@ -37,7 +37,7 @@ void PubSubNode<param_estimation::Estimation, msg_filter::SpeedAndOdom>::subCall
 int main(int argc, char **argv)
 {
 
-	ros::init(argc, argv, "Odometry_node");
-	PubSubNode<param_estimation::Estimation, msg_filter::SpeedAndOdom> Odometry("param_estimation","sync_msgs",1);
+	ros::init(argc, argv, "param_estimation_node");
+	PubSubNode<param_estimation::Estimation, msg_filter::SpeedAndOdom> param_estimation("param_estimation","sync_msgs",1);
 	ros::spin();
 }
