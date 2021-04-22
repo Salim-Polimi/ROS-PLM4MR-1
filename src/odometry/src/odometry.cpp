@@ -30,21 +30,50 @@ void PubSubNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCallb
 	Vr_m = (rpm_avg_r*2*M_PI*R)/60;
 	Vl_r = Vl_m * T_RATIO;
 	Vr_r = Vr_m * T_RATIO;
-
+	// estimation of the velocities
 	Vx = (Vl_r + Vr_r)/2;
 	omega_z = (-Vl_r+Vr_r)/(2*Y0);
-
+	// Constructing the estimated velocities message
+	twist_msg.header = receivedMsg->header;
 	twist_msg.twist.linear.x = Vx;
 	twist_msg.twist.angular.z = omega_z;
+	// Euler integration
+	// x = x + Vx*Ts*cos(theta);
+	// y = y + Vx*Ts*sin(theta);
+	// theta = theta + omega_z*Ts;
+	// Runge-Kutta integration
+	double previousTime;
+	double receivedTime = receivedMsg->header.stamp.toSec();
+	ROS_INFO ("Ts prima: %f",Ts);
+	ROS_INFO ("Received: %f",receivedTime);
+	if (FirstExec==true) {
+		previousTime = receivedTime;
+		Ts = 0.02;
+		FirstExec = false;
+	}else{
+		Ts = receivedTime - previousTime;
+		previousTime = receivedTime;
+	}
+	ROS_INFO ("Ts dopo: %f",Ts);
 
-  publisher.publish(twist_msg);
-	ROS_INFO ("Vx = (%f), omega_z = (%f)", Vx, omega_z);
+	x = x + Vx*Ts*cos(theta+(omega_z*Ts)/2);
+	y = y + Vx*Ts*sin(theta+(omega_z*Ts)/2);
+	theta = theta + omega_z*Ts;
+	// Constructing the odometry message
+	nav_msgs::Odometry odom_msg;
+	odom_msg.header = receivedMsg->header;
+	odom_msg.pose.pose.position.x = x;
+	odom_msg.pose.pose.position.y = y;
+	// no orientation for now
+
+	publisher.publish(twist_msg);
+	euler_publisher.publish(odom_msg);
+	// ROS_INFO ("Vx = (%f), omega_z = (%f), Ts = (%f)", Vx, omega_z, Ts);
 }
 
 
 int main(int argc, char **argv)
 {
-
 	ros::init(argc, argv, "odometry_node");
 	PubSubNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom> odometry("est_velocities","sync_msgs",1);
 	ros::spin();
