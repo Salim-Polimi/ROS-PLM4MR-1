@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   msg_filter
   message_generation
+  dynamic_reconfigure
 )
 
 ## System dependencies are found with CMake's conventions
@@ -55,11 +56,11 @@ find_package(catkin REQUIRED COMPONENTS
  )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+ add_service_files(
+   FILES
+   setResetOdom.srv
+   
+ )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -90,10 +91,9 @@ generate_messages(
 ##     and list every .cfg file to be processed
 
 ## Generate dynamic reconfigure parameters in the 'cfg' folder
-# generate_dynamic_reconfigure_options(
-#   cfg/DynReconf1.cfg
-#   cfg/DynReconf2.cfg
-# )
+ generate_dynamic_reconfigure_options(
+   cfg/parameters.cfg
+ )
 
 ###################################
 ## catkin specific configuration ##
@@ -128,13 +128,23 @@ include_directories(include)
 
 add_executable(param_estimation src/param_estimation.cpp)
 target_link_libraries(param_estimation ${catkin_LIBRARIES})
-
 add_dependencies(param_estimation ${catkin_EXPORTED_TARGETS})
 
 add_executable(param_handler src/param_handler.cpp)
 target_link_libraries(param_handler ${catkin_LIBRARIES})
+add_dependencies(param_handler ${PROJECT_NAME}_gencfg)
 
-add_dependencies(param_handler ${catkin_EXPORTED_TARGETS})
+add_executable(set_reset_odometry src/set_reset_odometry.cpp)
+target_link_libraries(set_reset_odometry ${catkin_LIBRARIES})
+add_dependencies(set_reset_odometry ${catkin_EXPORTED_TARGETS})
+
+#add_dependencies(param_handler ${catkin_EXPORTED_TARGETS})
+
+#per far si che l'header file del config, paramConfig.h, sia buildato prima di compilre il nodo
+
+
+
+
 
 #add_executable(param_handler src/param_handler.cpp)
 
