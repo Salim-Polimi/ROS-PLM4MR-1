@@ -7,12 +7,12 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   message_generation
   message_filters
+  robotics_hw1
 )
 
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-    MotorSpeed.msg
     SpeedAndOdom.msg
 )
 
@@ -46,6 +46,7 @@ CATKIN_DEPENDS
     nav_msgs
     message_runtime
     message_filters
+    robotics_hw1
 )
 
 
@@ -53,6 +54,7 @@ include_directories(
 
   ${catkin_INCLUDE_DIRS}
 )
+
 
 add_executable(msg_filter src/msg_filter.cpp)
 target_link_libraries(msg_filter ${catkin_LIBRARIES})

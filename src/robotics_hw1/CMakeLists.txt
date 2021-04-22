@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(robotics_hw1)
 
-find_package(
-  catkin REQUIRED
-  COMPONENTS
+find_package(catkin REQUIRED COMPONENTS
     message_generation
     nav_msgs
     std_msgs

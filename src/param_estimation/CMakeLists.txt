@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   nav_msgs
   msg_filter
+  robotics_hw1
   message_generation
 )
 
@@ -110,6 +111,7 @@ catkin_package(
     nav_msgs
     message_runtime
     msg_filter
+    robotics_hw1
 )
 
 ###########
