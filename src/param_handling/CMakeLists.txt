@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(param_estimation)
+project(param_handling)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -130,6 +130,13 @@ add_executable(param_estimation src/param_estimation.cpp)
 target_link_libraries(param_estimation ${catkin_LIBRARIES})
 
 add_dependencies(param_estimation ${catkin_EXPORTED_TARGETS})
+
+add_executable(param_handler src/param_handler.cpp)
+target_link_libraries(param_handler ${catkin_LIBRARIES})
+
+add_dependencies(param_handler ${catkin_EXPORTED_TARGETS})
+
+#add_executable(param_handler src/param_handler.cpp)
 
 
 ## Declare a C++ library

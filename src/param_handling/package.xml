@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>param_estimation</name>
+  <name>param_handling</name>
   <version>0.0.2</version>
-  <description>The param_estimation package</description>
+  <description>The param_handling package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
