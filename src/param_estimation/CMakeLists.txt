@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   nav_msgs
   msg_filter
-  robotics_hw1
   message_generation
 )
 
@@ -111,7 +110,7 @@ catkin_package(
     nav_msgs
     message_runtime
     msg_filter
-    robotics_hw1
+
 )
 
 ###########
@@ -126,10 +125,11 @@ include_directories(
 )
 include_directories(include)
 
-add_dependencies(msg_filter ${catkin_EXPORTED_TARGETS})
 
 add_executable(param_estimation src/param_estimation.cpp)
 target_link_libraries(param_estimation ${catkin_LIBRARIES})
+
+add_dependencies(param_estimation ${catkin_EXPORTED_TARGETS})
 
 
 ## Declare a C++ library

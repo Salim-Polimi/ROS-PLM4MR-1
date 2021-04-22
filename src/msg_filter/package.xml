@@ -57,6 +57,8 @@
   <build_depend>message_filters</build_depend>
   <build_depend>robotics_hw1</build_depend>
 
+  <!-->robotics_hw1</depend-->
+
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>message_runtime</build_export_depend>
   <build_export_depend>message_filters</build_export_depend>
