@@ -9,9 +9,9 @@ class OdometryNode
 	public:
 		// Motor to velocities computation variables
 		double omega_z;
-	  double Vx;
-	  double rpm_avg_l;
-	  double rpm_avg_r;
+	 	double Vx;
+	  	double rpm_avg_l;
+	  	double rpm_avg_r;
 		double Vl_m;
 		double Vr_m;
 		double Vl_r;
@@ -20,9 +20,16 @@ class OdometryNode
 		// integration variables
 		double receivedTime;
 		double previousTime;
+		double raggio;
 		double x;
 		double y;
 		double theta;
+
+		double y0;
+		double t_ratio;
+
+
+
 		double Ts;
 		bool FirstExec;
 
@@ -32,10 +39,15 @@ class OdometryNode
 			twist_publisher = n.advertise<PubType>(pubTopicName, queueSize);
 			odometry_publisher = n.advertise<nav_msgs::Odometry>("est_odometry", 1);
 			subscriber = n.subscribe<SubType>(subTopicName, queueSize, &OdometryNode::subCallback, this);
+			
+			n.getParam("/raggio", raggio);
+			n.getParam("/y0", y0);
+			n.getParam("/t_ratio", t_ratio);
+			
 			// initial conditions for the integration
-			x=0;
-			y=0;
-			theta=0;
+			n.getParam("/initial_x", x);
+			n.getParam("/initial_y",y);
+			n.getParam("/initial_theta", theta);
 			Ts=0;
 			FirstExec=true;
 		}

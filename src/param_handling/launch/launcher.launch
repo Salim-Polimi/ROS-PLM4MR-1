@@ -1,6 +1,11 @@
 <launch>
 
- <param name="y0" value="0.420" />
- <!--param name="initialPose" value="x0,y0,theta0" /-->	
+<param name="raggio" value="0.1575" />
+<param name="y0" value="0.51" />
+<param name="t_ratio" value="0.025974" />	
+<param name="initial_x" value="0.1" />	
+<param name="initial_y" value="0.1" />	
+<param name="initial_z" value="0.1" />	
+
 
 </launch>

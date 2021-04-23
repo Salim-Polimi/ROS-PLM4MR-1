@@ -5,10 +5,16 @@
 #include <odometry.h>
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/TwistStamped.h>
+#include <odometry/paramConfig.h>
+#include <dynamic_reconfigure/server.h>
+
+
+
 #define M_PI 3.14159265358979323846
-#define R 0.1575
-#define T_RATIO 0.025974
-#define Y0 0.51
+
+//metterlo nel .h dava problemi
+int int_method;
+
 
 template <>
 void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg)
@@ -16,13 +22,13 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 	// Estimated velocities computation
 	rpm_avg_l = - (receivedMsg->rpm_fl + receivedMsg->rpm_rl)/2;  // negato perchè gli assi di rotazione sono opposti
 	rpm_avg_r = (receivedMsg->rpm_fr + receivedMsg->rpm_rr)/2;
-	Vl_m = (rpm_avg_l*2*M_PI*R)/60;
-	Vr_m = (rpm_avg_r*2*M_PI*R)/60;
-	Vl_r = Vl_m * T_RATIO;
-	Vr_r = Vr_m * T_RATIO;
+	Vl_m = (rpm_avg_l*2*M_PI*raggio)/60;
+	Vr_m = (rpm_avg_r*2*M_PI*raggio)/60;
+	Vl_r = Vl_m * t_ratio;
+	Vr_r = Vr_m * t_ratio;
 	// Estimated velocities
 	Vx = (Vl_r + Vr_r)/2;
-	omega_z = (-Vl_r+Vr_r)/(2*Y0);
+	omega_z = (-Vl_r+Vr_r)/(2*y0);
 	// Estimated velocities message construction
 	twist_msg.header = receivedMsg->header;
 	twist_msg.twist.linear.x = Vx;
@@ -41,18 +47,30 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 		Ts = receivedTime - previousTime;
 		previousTime = receivedTime;
 	}
-	// Euler integration
-	/*
-	x = x + Vx*Ts*cos(theta);
-	y = y + Vx*Ts*sin(theta);
-	theta = theta + omega_z*Ts;
-	*/
-  // Runge-Kutta integration
-	//
-	x = x + Vx*Ts*cos(theta+(omega_z*Ts)/2);
-	y = y + Vx*Ts*sin(theta+(omega_z*Ts)/2);
-	theta = theta + omega_z*Ts;
-	//
+
+	switch(int_method)
+	{
+		case 0:
+			// Euler integration
+			x = x + Vx*Ts*cos(theta);
+			y = y + Vx*Ts*sin(theta);
+			theta = theta + omega_z*Ts;
+			break;
+
+		case 1:
+			// Runge-Kutta integration
+	
+			x = x + Vx*Ts*cos(theta+(omega_z*Ts)/2);
+			y = y + Vx*Ts*sin(theta+(omega_z*Ts)/2);
+			theta = theta + omega_z*Ts;
+			break;
+
+		default:
+			ROS_INFO("invalid integration method");
+			break;
+	}
+	
+  
 	// Odometry message construction
 	nav_msgs::Odometry odom_msg;
 	odom_msg.header = receivedMsg->header;
@@ -64,9 +82,54 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 }
 
 
+void responseCallback(odometry::paramConfig &config, uint32_t level) //CHIAMATA quando un parametro cambia?
+{
+  //printo i valori di tutti i parametri
+  
+  int_method = config.intMethod;
+ROS_INFO("integration method: %d", int_method);
+
+  //ROS_INFO ("%d",level);
+  // LEVEL ti dice il level corrispondente al parametro cambiato
+}
+
+
+
+
+
+
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "odometry_node");
-	OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom> odometry("est_velocities","sync_msgs",1);
-	ros::spin();
+ros::init(argc, argv, "odometry_node");
+
+/////////////////METTERE X Y THETA IN UN'UNICA VARIABILE POSE, vedi teams, msg del prof
+
+
+OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom> odometry("est_velocities","sync_msgs",1);
+
+
+
+//modifiche
+dynamic_reconfigure::Server<odometry::paramConfig> server;
+dynamic_reconfigure::Server<odometry::paramConfig>::CallbackType f;
+f = boost::bind(&responseCallback, _1, _2);
+server.setCallback(f);
+
+
+ros::Rate loop_rate(100); //100Hz
+
+	while (ros::ok())
+	{
+
+ 	//ROS_INFO("%f", y0); 
+    	ros::spinOnce();
+    	loop_rate.sleep();
+
+  	}
+
+
+	return 0;
 }
+
+
+
