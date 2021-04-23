@@ -8,8 +8,8 @@
 #define M_PI 3.14159265358979323846
 #define R 0.1575
 
-template <>
-void EstimationNode<param_estimation::Estimation, msg_filter::SpeedAndOdom>::subCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg)
+template <>				   
+void EstimationNode<param_handling::Estimation, msg_filter::SpeedAndOdom>::subCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg)
 {
 	omega_z = receivedMsg->odom.twist.twist.angular.z;
   Vx = receivedMsg->odom.twist.twist.linear.x;
@@ -29,6 +29,6 @@ void EstimationNode<param_estimation::Estimation, msg_filter::SpeedAndOdom>::sub
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "param_estimation_node");
-	EstimationNode<param_estimation::Estimation, msg_filter::SpeedAndOdom> param_estimation("param_estimation","sync_msgs",1);
-	ros::spin();
+	EstimationNode<param_handling::Estimation, msg_filter::SpeedAndOdom> param_estimation("param_estimation","sync_msgs",1);
+	ros::spin();		 
 }

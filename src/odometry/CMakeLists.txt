@@ -129,7 +129,7 @@ include_directories(include)
 add_executable(odometry src/odometry.cpp)
 target_link_libraries(odometry ${catkin_LIBRARIES})
 
-add_dependencies(odometry ${catkin_EXPORTED_TARGETS})
+add_dependencies(odometry ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

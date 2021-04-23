@@ -1,6 +1,6 @@
 #include "ros/ros.h"
 #include "string.h"
-#include <param_estimation/Estimation.h>
+#include <param_handling/Estimation.h> 
 
 template<typename PubType, typename SubType>
 class EstimationNode
@@ -12,7 +12,7 @@ class EstimationNode
 		double rpm_avg_r;
 		double Vl_m;
 		double Vr_m;
-		param_estimation::Estimation est;
+		param_handling::Estimation est; 
 
 		EstimationNode() {}
 		EstimationNode(std::string pubTopicName, std::string subTopicName, int queueSize)

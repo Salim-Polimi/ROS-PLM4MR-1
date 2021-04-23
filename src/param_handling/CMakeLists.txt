@@ -128,7 +128,7 @@ include_directories(include)
 
 add_executable(param_estimation src/param_estimation.cpp)
 target_link_libraries(param_estimation ${catkin_LIBRARIES})
-add_dependencies(param_estimation ${catkin_EXPORTED_TARGETS})
+add_dependencies(param_estimation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(param_handler src/param_handler.cpp)
 target_link_libraries(param_handler ${catkin_LIBRARIES})
@@ -136,7 +136,7 @@ add_dependencies(param_handler ${PROJECT_NAME}_gencfg)
 
 add_executable(set_reset_odometry src/set_reset_odometry.cpp)
 target_link_libraries(set_reset_odometry ${catkin_LIBRARIES})
-add_dependencies(set_reset_odometry ${catkin_EXPORTED_TARGETS})
+add_dependencies(set_reset_odometry ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 #add_dependencies(param_handler ${catkin_EXPORTED_TARGETS})
 
