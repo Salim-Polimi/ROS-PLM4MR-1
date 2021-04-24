@@ -56,11 +56,7 @@ find_package(catkin REQUIRED COMPONENTS
  )
 
 ## Generate services in the 'srv' folder
- add_service_files(
-   FILES
-   setResetOdom.srv
-   
- )
+
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -127,9 +123,7 @@ add_executable(param_estimation src/param_estimation.cpp)
 target_link_libraries(param_estimation ${catkin_LIBRARIES})
 add_dependencies(param_estimation ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-add_executable(set_reset_odometry src/set_reset_odometry.cpp)
-target_link_libraries(set_reset_odometry ${catkin_LIBRARIES})
-add_dependencies(set_reset_odometry ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 #add_dependencies(param_handler ${catkin_EXPORTED_TARGETS})
 

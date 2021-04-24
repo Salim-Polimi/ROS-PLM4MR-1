@@ -5,14 +5,10 @@
 #include <odometry.h>
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/TwistStamped.h>
-#include <odometry/paramConfig.h>
-#include <dynamic_reconfigure/server.h>
-
 
 
 #define M_PI 3.14159265358979323846
 
-//metterlo nel .h dava problemi
 int int_method;
 
 
@@ -87,7 +83,7 @@ void responseCallback(odometry::paramConfig &config, uint32_t level) //CHIAMATA 
   //printo i valori di tutti i parametri
   
   int_method = config.intMethod;
-ROS_INFO("integration method: %d", int_method);
+  ROS_INFO("integration method: %d", int_method);
 
   //ROS_INFO ("%d",level);
   // LEVEL ti dice il level corrispondente al parametro cambiato
@@ -95,6 +91,27 @@ ROS_INFO("integration method: %d", int_method);
 
 
 
+template<>
+bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::resetOdom(odometry::setResetOdom::Request  &req, odometry::setResetOdom::Response &res)
+{
+ 	
+ 	x=0;
+ 	y=0;
+ 	theta=0;
+
+
+  return true;
+}
+
+template<>
+bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::setOdom(odometry::setResetOdom::Request  &req, odometry::setResetOdom::Response &res)
+{
+	x=req.x;
+ 	y=req.y;
+ 	theta=req.theta;
+
+  return true;
+}
 
 
 
@@ -105,6 +122,7 @@ ros::init(argc, argv, "odometry_node");
 /////////////////METTERE X Y THETA IN UN'UNICA VARIABILE POSE, vedi teams, msg del prof
 
 
+
 OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom> odometry("est_velocities","sync_msgs",1);
 
 
@@ -112,8 +130,10 @@ OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom> odometry("es
 //modifiche
 dynamic_reconfigure::Server<odometry::paramConfig> server;
 dynamic_reconfigure::Server<odometry::paramConfig>::CallbackType f;
-f = boost::bind(&responseCallback, _1, _2);
+f = boost::bind(responseCallback, _1, _2);
 server.setCallback(f);
+
+
 
 
 ros::Rate loop_rate(100); //100Hz

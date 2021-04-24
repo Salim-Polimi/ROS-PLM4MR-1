@@ -3,6 +3,11 @@
 #include <std_msgs/Time.h>
 #include <geometry_msgs/TwistStamped.h>
 
+#include "odometry/setResetOdom.h"
+
+#include <odometry/paramConfig.h>
+#include <dynamic_reconfigure/server.h>
+
 template<typename PubType, typename SubType>
 class OdometryNode
 {
@@ -27,7 +32,7 @@ class OdometryNode
 
 		double y0;
 		double t_ratio;
-///FDSOGJGHKSUD
+		
 
 
 		double Ts;
@@ -48,11 +53,20 @@ class OdometryNode
 			n.getParam("/initial_x", x);
 			n.getParam("/initial_y",y);
 			n.getParam("/initial_theta", theta);
+
+
+			ros::ServiceServer set_service = n.advertiseService("setOdom", &OdometryNode::setOdom, this);
+			ros::ServiceServer reset_service = n.advertiseService("resetOdom", &OdometryNode::resetOdom, this);
+
+			
+
 			Ts=0;
 			FirstExec=true;
 		}
 
 		void subCallback(const typename SubType::ConstPtr& receivedMsg);
+		bool setOdom(odometry::setResetOdom::Request  &req, odometry::setResetOdom::Response &res);
+		bool resetOdom(odometry::setResetOdom::Request  &req, odometry::setResetOdom::Response &res);
 	protected:
 			ros::Subscriber subscriber;
 			ros::Publisher twist_publisher;
