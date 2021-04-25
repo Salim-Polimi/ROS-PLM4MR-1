@@ -2,7 +2,7 @@
 #include "math.h"
 #include <nav_msgs/Odometry.h>
 #include <msg_filter/SpeedAndOdom.h>
-#include <param_handling/Estimation.h>
+#include <param_estimation/Estimation.h>
 #include <param_estimation.h>
 #include <std_msgs/Float64.h>
 #define M_PI 3.14159265358979323846
@@ -10,7 +10,7 @@
 #include "odometry/setResetOdom.h"
 
 template <>				   
-void EstimationNode<param_handling::Estimation, msg_filter::SpeedAndOdom>::subCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg)
+void EstimationNode<param_estimation::Estimation, msg_filter::SpeedAndOdom>::subCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg)
 {
 	omega_z = receivedMsg->odom.twist.twist.angular.z;
   Vx = receivedMsg->odom.twist.twist.linear.x;
@@ -30,7 +30,7 @@ void EstimationNode<param_handling::Estimation, msg_filter::SpeedAndOdom>::subCa
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "param_estimation_node");
-	EstimationNode<param_handling::Estimation, msg_filter::SpeedAndOdom> param_estimation("param_estimation","sync_msgs",1);
+	EstimationNode<param_estimation::Estimation, msg_filter::SpeedAndOdom> param_estimation("param_estimation","sync_msgs",1);
 	
 	ros::spin();		 
 }

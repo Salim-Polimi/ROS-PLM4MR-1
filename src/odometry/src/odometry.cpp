@@ -98,6 +98,10 @@ bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::resetO
  	y=0;
  	theta=0;
 
+ 	res.x=x;
+ 	res.y=y;
+ 	res.theta=theta;
+
     return true;
 }
 
@@ -112,7 +116,7 @@ bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::setOdo
  	res.x=x;
  	res.y=y;
  	res.theta=theta;
- 	
+
     return true;
 }
 
