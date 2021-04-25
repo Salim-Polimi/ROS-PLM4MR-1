@@ -1,11 +1,3 @@
 <launch>
-
-<param name="raggio" value="0.1575" />
-<param name="y0" value="0.51" />
-<param name="t_ratio" value="0.025974" />	
-<param name="initial_x" value="0.1" />	
-<param name="initial_y" value="0.1" />	
-<param name="initial_z" value="0.1" />	
-
-
+	<rosparam file="$(find param_handling)/launch/parameters.yaml" /> 
 </launch>

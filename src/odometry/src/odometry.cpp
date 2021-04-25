@@ -11,12 +11,11 @@
 
 int int_method;
 
-
 template <>
 void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg)
 {
 	// Estimated velocities computation
-	rpm_avg_l = - (receivedMsg->rpm_fl + receivedMsg->rpm_rl)/2;  // negato perchè gli assi di rotazione sono opposti
+	rpm_avg_l = - (receivedMsg->rpm_fl + receivedMsg->rpm_rl)/2;  // negato (-)perchè gli assi di rotazione sono opposti
 	rpm_avg_r = (receivedMsg->rpm_fr + receivedMsg->rpm_rr)/2;
 	Vl_m = (rpm_avg_l*2*M_PI*raggio)/60;
 	Vr_m = (rpm_avg_r*2*M_PI*raggio)/60;
@@ -43,7 +42,7 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 		Ts = receivedTime - previousTime;
 		previousTime = receivedTime;
 	}
-
+	ROS_INFO("X STA A %f", x);
 	switch(int_method)
 	{
 		case 0:
@@ -74,6 +73,7 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 	odom_msg.pose.pose.position.y = y;
 	// Orientation is missing! must be added later
 	// Odometry publication
+	ROS_INFO("STO A PUBBLICA' X STA A %f", x);
 	odometry_publisher.publish(odom_msg);
 }
 
@@ -94,49 +94,37 @@ void responseCallback(odometry::paramConfig &config, uint32_t level) //CHIAMATA 
 template<>
 bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::resetOdom(odometry::setResetOdom::Request  &req, odometry::setResetOdom::Response &res)
 {
- 	
  	x=0;
  	y=0;
  	theta=0;
-
-
-  return true;
+    return true;
 }
 
 template<>
 bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::setOdom(odometry::setResetOdom::Request  &req, odometry::setResetOdom::Response &res)
 {
+	
 	x=req.x;
  	y=req.y;
  	theta=req.theta;
-
-  return true;
+    return true;
 }
 
 
 
 int main(int argc, char **argv)
 {
-ros::init(argc, argv, "odometry_node");
+	ros::init(argc, argv, "odometry_node");
 
-/////////////////METTERE X Y THETA IN UN'UNICA VARIABILE POSE, vedi teams, msg del prof
+	OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom> odometry("est_velocities","sync_msgs",1);
 
+	//modifiche
+	dynamic_reconfigure::Server<odometry::paramConfig> server;
+	dynamic_reconfigure::Server<odometry::paramConfig>::CallbackType f;
+	f = boost::bind(responseCallback, _1, _2);
+	server.setCallback(f);
 
-
-OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom> odometry("est_velocities","sync_msgs",1);
-
-
-
-//modifiche
-dynamic_reconfigure::Server<odometry::paramConfig> server;
-dynamic_reconfigure::Server<odometry::paramConfig>::CallbackType f;
-f = boost::bind(responseCallback, _1, _2);
-server.setCallback(f);
-
-
-
-
-ros::Rate loop_rate(100); //100Hz
+	ros::Rate loop_rate(100); //100Hz
 
 	while (ros::ok())
 	{

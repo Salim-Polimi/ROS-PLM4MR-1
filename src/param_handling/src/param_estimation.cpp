@@ -7,6 +7,7 @@
 #include <std_msgs/Float64.h>
 #define M_PI 3.14159265358979323846
 #define R 0.1575
+#include "odometry/setResetOdom.h"
 
 template <>				   
 void EstimationNode<param_handling::Estimation, msg_filter::SpeedAndOdom>::subCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg)
@@ -30,5 +31,6 @@ int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "param_estimation_node");
 	EstimationNode<param_handling::Estimation, msg_filter::SpeedAndOdom> param_estimation("param_estimation","sync_msgs",1);
+	
 	ros::spin();		 
 }
