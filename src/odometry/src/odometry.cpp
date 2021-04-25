@@ -6,6 +6,8 @@
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/TwistStamped.h>
 
+#include <odometry/OdometryAndMethod.h>
+
 
 #define M_PI 3.14159265358979323846
 
@@ -42,7 +44,10 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 		Ts = receivedTime - previousTime;
 		previousTime = receivedTime;
 	}
-	ROS_INFO("X STA A %f", x);
+	
+
+	ROS_INFO("int_method STA A %i", int_method);
+
 	switch(int_method)
 	{
 		case 0:
@@ -50,6 +55,7 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 			x = x + Vx*Ts*cos(theta);
 			y = y + Vx*Ts*sin(theta);
 			theta = theta + omega_z*Ts;
+			method.data = "euler";
 			break;
 
 		case 1:
@@ -58,22 +64,24 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 			x = x + Vx*Ts*cos(theta+(omega_z*Ts)/2);
 			y = y + Vx*Ts*sin(theta+(omega_z*Ts)/2);
 			theta = theta + omega_z*Ts;
+			method.data = "rk";
 			break;
 
 		default:
 			ROS_INFO("invalid integration method");
+			method.data = "INVALID!";
 			break;
 	}
 	
   
 	// Odometry message construction
-	nav_msgs::Odometry odom_msg;
-	odom_msg.header = receivedMsg->header;
-	odom_msg.pose.pose.position.x = x;
-	odom_msg.pose.pose.position.y = y;
+	odometry::OdometryAndMethod odom_msg;
+	odom_msg.odom.header = receivedMsg->header;
+	odom_msg.odom.pose.pose.position.x = x;
+	odom_msg.odom.pose.pose.position.y = y;
+	odom_msg.method = method;
 	// Orientation is missing! must be added later
 	// Odometry publication
-	ROS_INFO("STO A PUBBLICA' X STA A %f", x);
 	odometry_publisher.publish(odom_msg);
 }
 

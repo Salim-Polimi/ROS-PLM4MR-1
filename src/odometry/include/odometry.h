@@ -1,6 +1,7 @@
 #include "ros/ros.h"
 #include "string.h"
 #include <std_msgs/Time.h>
+#include <std_msgs/String.h>
 #include <geometry_msgs/TwistStamped.h>
 
 #include "odometry/setOdom.h"
@@ -8,6 +9,8 @@
 
 #include <odometry/paramConfig.h>
 #include <dynamic_reconfigure/server.h>
+
+#include <odometry/OdometryAndMethod.h>
 
 template<typename PubType, typename SubType>
 class OdometryNode
@@ -33,8 +36,8 @@ class OdometryNode
 		// Speed estimation parameters
 		double y0;
 		double t_ratio;
-		// Integration method enum
-		int int_method;
+		// Integration method string
+		std_msgs::String method;
 
 		double Ts;
 		bool FirstExec;
@@ -43,7 +46,7 @@ class OdometryNode
 		OdometryNode(std::string pubTopicName, std::string subTopicName, int queueSize)
 		{
 			twist_publisher = n.advertise<PubType>(pubTopicName, queueSize);
-			odometry_publisher = n.advertise<nav_msgs::Odometry>("est_odometry", 1);
+			odometry_publisher = n.advertise<odometry::OdometryAndMethod>("est_odometry", 1);
 			subscriber = n.subscribe<SubType>(subTopicName, queueSize, &OdometryNode::subCallback, this);
 			
 			n.getParam("/raggio", raggio);
@@ -52,16 +55,17 @@ class OdometryNode
 			
 			// initial conditions for the integration
 			if(n.getParam("/initial_pose/initial_x", x)){
-				ROS_INFO("T'APPOST X STA A %f", x);
+				ROS_INFO("x=%f", x);
 			}else{
-				ROS_INFO("NON VA BRO X STA A %f", x);
+				ROS_INFO("errore x=%f", x);
 			}
 			n.getParam("/initial_pose/initial_y",y);
 			n.getParam("/initial_pose/initial_theta", theta);
 
-			// forse non dovremmo dichiarare questa roba qui, dovremmo dichiararla in protected e poi assegnare qui (set_service = n.adv...)
 			set_service = n.advertiseService("setOdom", &OdometryNode::setOdom, this);
 			reset_service = n.advertiseService("resetOdom", &OdometryNode::resetOdom, this);
+
+			method.data = "euler [DEFAULT]";
 
 			Ts=0;
 			FirstExec=true;
