@@ -92,7 +92,7 @@ void responseCallback(odometry::paramConfig &config, uint32_t level) //CHIAMATA 
 
 
 template<>
-bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::resetOdom(odometry::setResetOdom::Request  &req, odometry::setResetOdom::Response &res)
+bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::resetOdom(odometry::resetOdom::Request  &req, odometry::resetOdom::Response &res)
 {
  	x=0;
  	y=0;
@@ -101,7 +101,7 @@ bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::resetO
 }
 
 template<>
-bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::setOdom(odometry::setResetOdom::Request  &req, odometry::setResetOdom::Response &res)
+bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::setOdom(odometry::setOdom::Request  &req, odometry::setOdom::Response &res)
 {
 	
 	x=req.x;

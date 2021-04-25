@@ -60,7 +60,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  setResetOdom.srv
+  setOdom.srv
+  resetOdom.srv
 )
 
 

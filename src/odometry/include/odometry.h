@@ -3,7 +3,8 @@
 #include <std_msgs/Time.h>
 #include <geometry_msgs/TwistStamped.h>
 
-#include "odometry/setResetOdom.h"
+#include "odometry/setOdom.h"
+#include "odometry/resetOdom.h"
 
 #include <odometry/paramConfig.h>
 #include <dynamic_reconfigure/server.h>
@@ -67,8 +68,8 @@ class OdometryNode
 		}
 
 		void subCallback(const typename SubType::ConstPtr& receivedMsg);
-		bool setOdom(odometry::setResetOdom::Request  &req, odometry::setResetOdom::Response &res);
-		bool resetOdom(odometry::setResetOdom::Request  &req, odometry::setResetOdom::Response &res);
+		bool resetOdom(odometry::resetOdom::Request  &req, odometry::resetOdom::Response &res);
+		bool setOdom(odometry::setOdom::Request  &req, odometry::setOdom::Response &res);
 	protected:
 		ros::NodeHandle n;
 		ros::Subscriber subscriber;
