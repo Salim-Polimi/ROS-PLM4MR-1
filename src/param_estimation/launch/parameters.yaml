@@ -2,7 +2,7 @@ raggio: 0.1575
 y0: 0.51
 t_ratio: 0.025974
 initial_pose: {
-  initial_x: 0.1,
-  initial_y: 0.2,
-  initial_theta: 0.3
+  initial_x: 0.0,
+  initial_y: 0.0,
+  initial_theta: 0.0
 }

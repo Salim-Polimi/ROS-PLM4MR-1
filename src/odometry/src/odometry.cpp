@@ -77,10 +77,13 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 	// Odometry message construction
 	odometry::OdometryAndMethod odom_msg;
 	odom_msg.odom.header = receivedMsg->header;
+
 	odom_msg.odom.pose.pose.position.x = x;
 	odom_msg.odom.pose.pose.position.y = y;
+	quaternion = tf::createQuaternionMsgFromYaw(theta);
+	odom_msg.odom.pose.pose.orientation = quaternion;
+
 	odom_msg.method = method;
-	// Orientation is missing! must be added later
 	// Odometry publication
 	odometry_publisher.publish(odom_msg);
 }

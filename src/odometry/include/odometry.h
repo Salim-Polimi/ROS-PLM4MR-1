@@ -12,6 +12,9 @@
 
 #include <odometry/OdometryAndMethod.h>
 
+#include <tf/transform_datatypes.h>
+#include <geometry_msgs/Quaternion.h>
+
 template<typename PubType, typename SubType>
 class OdometryNode
 {
@@ -33,6 +36,7 @@ class OdometryNode
 		double x;
 		double y;
 		double theta;
+		geometry_msgs::Quaternion quaternion;
 		// Speed estimation parameters
 		double y0;
 		double t_ratio;
