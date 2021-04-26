@@ -1,3 +1,3 @@
 <launch>
-	<rosparam file="$(find param_estimation)/launch/parameters.yaml" /> 
+	<rosparam file="$(find param_estimation)/launch/parameters.yaml" />
 </launch>

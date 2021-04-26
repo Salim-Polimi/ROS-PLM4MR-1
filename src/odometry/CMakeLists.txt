@@ -13,8 +13,9 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   msg_filter
-   dynamic_reconfigure
-   message_generation
+  dynamic_reconfigure
+  message_generation
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -113,7 +114,7 @@ catkin_package(
     geometry_msgs
     msg_filter
     message_runtime
-)
+)#include "odometry/setResetOdom.h"
 
 ###########
 ## Build ##

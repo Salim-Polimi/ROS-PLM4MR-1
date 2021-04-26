@@ -15,6 +15,8 @@
 #include <tf/transform_datatypes.h>
 #include <geometry_msgs/Quaternion.h>
 
+#include <tf/transform_broadcaster.h>
+
 template<typename PubType, typename SubType>
 class OdometryNode
 {
@@ -52,11 +54,11 @@ class OdometryNode
 			twist_publisher = n.advertise<PubType>(pubTopicName, queueSize);
 			odometry_publisher = n.advertise<odometry::OdometryAndMethod>("est_odometry", 1);
 			subscriber = n.subscribe<SubType>(subTopicName, queueSize, &OdometryNode::subCallback, this);
-			
+
 			n.getParam("/raggio", raggio);
 			n.getParam("/y0", y0);
 			n.getParam("/t_ratio", t_ratio);
-			
+
 			// initial conditions for the integration
 			if(n.getParam("/initial_pose/initial_x", x)){
 				ROS_INFO("x=%f", x);
@@ -83,7 +85,10 @@ class OdometryNode
 		ros::Subscriber subscriber;
 		ros::Publisher twist_publisher;
 		ros::Publisher odometry_publisher;
-
+		// services
 		ros::ServiceServer set_service;
 		ros::ServiceServer reset_service;
+		// tf
+		tf::TransformBroadcaster br;
+  	tf::Transform transform;
 };

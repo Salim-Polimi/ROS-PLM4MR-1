@@ -1,13 +1,10 @@
-#include "ros/ros.h"
+#include <odometry.h>
 #include "math.h"
 #include <nav_msgs/Odometry.h>
 #include <msg_filter/SpeedAndOdom.h>
-#include <odometry.h>
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/TwistStamped.h>
-
-#include <odometry/OdometryAndMethod.h>
-
+#include <tf/transform_broadcaster.h>
 
 #define M_PI 3.14159265358979323846
 
@@ -44,7 +41,7 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 		Ts = receivedTime - previousTime;
 		previousTime = receivedTime;
 	}
-	
+
 
 	ROS_INFO("int_method STA A %i", int_method);
 
@@ -57,42 +54,44 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 			theta = theta + omega_z*Ts;
 			method.data = "euler";
 			break;
-
 		case 1:
 			// Runge-Kutta integration
-	
 			x = x + Vx*Ts*cos(theta+(omega_z*Ts)/2);
 			y = y + Vx*Ts*sin(theta+(omega_z*Ts)/2);
 			theta = theta + omega_z*Ts;
 			method.data = "rk";
 			break;
-
 		default:
 			ROS_INFO("invalid integration method");
 			method.data = "INVALID!";
 			break;
 	}
-	
-  
+
 	// Odometry message construction
 	odometry::OdometryAndMethod odom_msg;
 	odom_msg.odom.header = receivedMsg->header;
-
 	odom_msg.odom.pose.pose.position.x = x;
 	odom_msg.odom.pose.pose.position.y = y;
 	quaternion = tf::createQuaternionMsgFromYaw(theta);
 	odom_msg.odom.pose.pose.orientation = quaternion;
-
 	odom_msg.method = method;
 	// Odometry publication
 	odometry_publisher.publish(odom_msg);
+
+	// tf message construction and sending
+	transform.setOrigin( tf::Vector3(x, y, 0) );
+  tf::Quaternion q;
+  q.setRPY(0, 0, theta);
+  transform.setRotation(q);
+  br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "est_scout"));
+
 }
 
 
 void responseCallback(odometry::paramConfig &config, uint32_t level) //CHIAMATA quando un parametro cambia?
 {
   //printo i valori di tutti i parametri
-  
+
   int_method = config.intMethod;
   ROS_INFO("integration method: %d", int_method);
 
@@ -119,7 +118,6 @@ bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::resetO
 template<>
 bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::setOdom(odometry::setOdom::Request  &req, odometry::setOdom::Response &res)
 {
-	
 	x=req.x;
  	y=req.y;
  	theta=req.theta;
@@ -128,7 +126,7 @@ bool OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::setOdo
  	res.y=y;
  	res.theta=theta;
 
-    return true;
+  return true;
 }
 
 
@@ -146,19 +144,10 @@ int main(int argc, char **argv)
 	server.setCallback(f);
 
 	ros::Rate loop_rate(100); //100Hz
-
-	while (ros::ok())
-	{
-
- 	//ROS_INFO("%f", y0); 
+	while (ros::ok()){
     	ros::spinOnce();
     	loop_rate.sleep();
-
-  	}
-
+  }
 
 	return 0;
 }
-
-
-
