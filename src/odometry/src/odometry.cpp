@@ -8,7 +8,7 @@
 
 #define M_PI 3.14159265358979323846
 
-int int_method;
+
 
 template <>
 void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg)
@@ -88,7 +88,8 @@ void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::subCal
 }
 
 
-void responseCallback(odometry::paramConfig &config, uint32_t level) //CHIAMATA quando un parametro cambia?
+template<>
+void OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom>::responseCallback(odometry::paramConfig &config, uint32_t level) //CHIAMATA quando un parametro cambia?
 {
   //printo i valori di tutti i parametri
 
@@ -138,10 +139,8 @@ int main(int argc, char **argv)
 	OdometryNode<geometry_msgs::TwistStamped, msg_filter::SpeedAndOdom> odometry("est_velocities","sync_msgs",1);
 
 	//modifiche
-	dynamic_reconfigure::Server<odometry::paramConfig> server;
-	dynamic_reconfigure::Server<odometry::paramConfig>::CallbackType f;
-	f = boost::bind(responseCallback, _1, _2);
-	server.setCallback(f);
+	
+	
 
 	ros::Rate loop_rate(100); //100Hz
 	while (ros::ok()){

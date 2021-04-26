@@ -47,10 +47,12 @@ class OdometryNode
 
 		double Ts;
 		bool FirstExec;
+		int int_method;
 
 		OdometryNode() {}
 		OdometryNode(std::string pubTopicName, std::string subTopicName, int queueSize)
 		{
+
 			twist_publisher = n.advertise<PubType>(pubTopicName, queueSize);
 			odometry_publisher = n.advertise<odometry::OdometryAndMethod>("est_odometry", 1);
 			subscriber = n.subscribe<SubType>(subTopicName, queueSize, &OdometryNode::subCallback, this);
@@ -73,6 +75,10 @@ class OdometryNode
 
 			method.data = "euler [DEFAULT]";
 
+
+			f = boost::bind(&OdometryNode::responseCallback, this, _1, _2);
+	        server.setCallback(f);
+
 			Ts=0;
 			FirstExec=true;
 		}
@@ -80,6 +86,7 @@ class OdometryNode
 		void subCallback(const typename SubType::ConstPtr& receivedMsg);
 		bool resetOdom(odometry::resetOdom::Request  &req, odometry::resetOdom::Response &res);
 		bool setOdom(odometry::setOdom::Request  &req, odometry::setOdom::Response &res);
+		void responseCallback(odometry::paramConfig &config, uint32_t level);
 	protected:
 		ros::NodeHandle n;
 		ros::Subscriber subscriber;
@@ -91,4 +98,8 @@ class OdometryNode
 		// tf
 		tf::TransformBroadcaster br;
   	tf::Transform transform;
+
+  		//server
+  	dynamic_reconfigure::Server<odometry::paramConfig> server;
+	dynamic_reconfigure::Server<odometry::paramConfig>::CallbackType f;
 };
