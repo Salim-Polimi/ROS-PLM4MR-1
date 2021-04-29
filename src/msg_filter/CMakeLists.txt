@@ -54,7 +54,7 @@ include_directories(
 
 	${catkin_INCLUDE_DIRS}
 )
-
+include_directories(include)
 
 add_executable(msg_filter src/msg_filter.cpp)
 target_link_libraries(msg_filter ${catkin_LIBRARIES})

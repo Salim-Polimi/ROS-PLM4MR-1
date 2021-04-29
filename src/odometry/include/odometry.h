@@ -17,7 +17,7 @@
 
 #include <tf/transform_broadcaster.h>
 
-template<typename PubType, typename SubType>
+template<typename PubType, typename PubType2, typename SubType>
 class OdometryNode
 {
 	public:
@@ -50,23 +50,29 @@ class OdometryNode
 		int int_method;
 
 		OdometryNode() {}
-		OdometryNode(std::string pubTopicName, std::string subTopicName, int queueSize)
+
+		OdometryNode(std::string pubTopicName, std::string pubTopicName2, std::string subTopicName, int queueSize)
 		{
 
 			twist_publisher = n.advertise<PubType>(pubTopicName, queueSize);
-			odometry_publisher = n.advertise<odometry::OdometryAndMethod>("est_odometry", 1);
+			odometry_publisher = n.advertise<PubType2>(pubTopicName2, queueSize);
 			subscriber = n.subscribe<SubType>(subTopicName, queueSize, &OdometryNode::subCallback, this);
 
 			n.getParam("/raggio", raggio);
 			n.getParam("/y0", y0);
 			n.getParam("/t_ratio", t_ratio);
 
+			
 			// initial conditions for the integration
-			if(n.getParam("/initial_pose/initial_x", x)){
+			if(n.getParam("/initial_pose/initial_x", x))
+			{
 				ROS_INFO("x=%f", x);
-			}else{
+			}
+			else
+			{
 				ROS_INFO("errore x=%f", x);
 			}
+
 			n.getParam("/initial_pose/initial_y",y);
 			n.getParam("/initial_pose/initial_theta", theta);
 
@@ -76,7 +82,7 @@ class OdometryNode
 			method.data = "euler [DEFAULT]";
 
 
-			f = boost::bind(&OdometryNode::responseCallback, this, _1, _2);
+			f = boost::bind(&OdometryNode::responseCallback, this, _1, _2); //ATTENTO HAI CAMBIATO GLI ARGOMENTI DELLA CLASSE -MOLI
 	        server.setCallback(f);
 
 			Ts=0;
@@ -87,19 +93,22 @@ class OdometryNode
 		bool resetOdom(odometry::resetOdom::Request  &req, odometry::resetOdom::Response &res);
 		bool setOdom(odometry::setOdom::Request  &req, odometry::setOdom::Response &res);
 		void responseCallback(odometry::paramConfig &config, uint32_t level);
+
 	protected:
 		ros::NodeHandle n;
 		ros::Subscriber subscriber;
 		ros::Publisher twist_publisher;
 		ros::Publisher odometry_publisher;
+
 		// services
 		ros::ServiceServer set_service;
 		ros::ServiceServer reset_service;
+
+		//server
+  		dynamic_reconfigure::Server<odometry::paramConfig> server;
+		dynamic_reconfigure::Server<odometry::paramConfig>::CallbackType f;
+
 		// tf
 		tf::TransformBroadcaster br;
-  	tf::Transform transform;
-
-  		//server
-  	dynamic_reconfigure::Server<odometry::paramConfig> server;
-	dynamic_reconfigure::Server<odometry::paramConfig>::CallbackType f;
+  		tf::Transform transform;
 };

@@ -16,6 +16,7 @@ class EstimationNode
 		param_estimation::Estimation est;
 
 		EstimationNode() {}
+
 		EstimationNode(std::string pubTopicName, std::string subTopicName, int queueSize)
 		{
 			publisher = n.advertise<PubType>(pubTopicName, queueSize);
@@ -25,9 +26,9 @@ class EstimationNode
 		void subCallback(const typename SubType::ConstPtr& receivedMsg);
 
 	protected:
-			ros::Subscriber subscriber;
-			ros::Publisher publisher;
-			ros::NodeHandle n;
+		ros::Subscriber subscriber;
+		ros::Publisher publisher;
+		ros::NodeHandle n;
 
 
 };
