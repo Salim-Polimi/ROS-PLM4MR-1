@@ -12,9 +12,8 @@ void FilterNode<msg_filter::SpeedAndOdom, robotics_hw1::MotorSpeed, nav_msgs::Od
                                                                                                   const robotics_hw1::MotorSpeed::ConstPtr& msg4_speed,
                                                                                                   const nav_msgs::Odometry::ConstPtr& msg5_odom) 
 {
-  ROS_INFO ("stato 4");
-
-  ROS_INFO ("Received: (%f) and (%f) and (%f) and (%f)",  msg1_speed->rpm,  msg2_speed->rpm,  msg3_speed->rpm,  msg4_speed->rpm);
+  // DEBUG
+  //ROS_INFO ("Received: (%f) and (%f) and (%f) and (%f)",  msg1_speed->rpm,  msg2_speed->rpm,  msg3_speed->rpm,  msg4_speed->rpm);
   
   msg_filter::SpeedAndOdom SyncMsg;
   SyncMsg.header = msg1_speed->header;

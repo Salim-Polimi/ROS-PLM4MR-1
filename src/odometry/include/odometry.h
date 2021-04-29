@@ -64,6 +64,8 @@ class OdometryNode
 
 			
 			// initial conditions for the integration
+			
+			/* DEBUG
 			if(n.getParam("/initial_pose/initial_x", x))
 			{
 				ROS_INFO("x=%f", x);
@@ -72,7 +74,9 @@ class OdometryNode
 			{
 				ROS_INFO("errore x=%f", x);
 			}
+			*/
 
+			n.getParam("/initial_pose/initial_x", x);
 			n.getParam("/initial_pose/initial_y",y);
 			n.getParam("/initial_pose/initial_theta", theta);
 
@@ -82,7 +86,7 @@ class OdometryNode
 			method.data = "euler [DEFAULT]";
 
 
-			f = boost::bind(&OdometryNode::responseCallback, this, _1, _2); //ATTENTO HAI CAMBIATO GLI ARGOMENTI DELLA CLASSE -MOLI
+			f = boost::bind(&OdometryNode::responseCallback, this, _1, _2);
 	        server.setCallback(f);
 
 			Ts=0;

@@ -6,5 +6,5 @@
 
 	<!-- comment -->
 	
-	<node name="param_estimation" type="param_estimation" pkg="param_estimation" output="screen" /> 
+	<node name="odometry" type="odometry" pkg="odometry" output="screen" />
 </launch>
