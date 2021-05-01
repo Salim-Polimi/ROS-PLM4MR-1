@@ -15,7 +15,7 @@ gt_x_list = []
 gt_y_list = []
 odom_x_list = []
 odom_y_list = []
-pointLimit = 1000;
+pointLimit = 15000;
 
 for msg in bag.read_messages(topics=['/gt_pose']):
    gt_x_list.append(msg[1].pose.position.x)
@@ -27,10 +27,10 @@ for msg in bag.read_messages(topics=['/scout_odom']):
 
 bag.close()
 
-for i in range(pointLimit):
-    if gt_x_list[i] == gt_x_list[i-1]:
-        gt_x_list[i-1] = "NULL"
-    print len(gt_x_list)
+#for i in range(pointLimit):
+#    if gt_x_list[i] == gt_x_list[i-1]:
+#        gt_x_list[i-1] = "NULL"
+#    print len(gt_x_list)
 
 
 plt.plot(gt_x_list[:pointLimit],gt_y_list[:pointLimit])
