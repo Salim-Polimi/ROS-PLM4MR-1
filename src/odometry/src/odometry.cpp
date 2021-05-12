@@ -73,7 +73,12 @@ void OdometryNode<geometry_msgs::TwistStamped, odometry::OdometryAndMethod, msg_
 
 	// Odometry message construction
 	odometry::OdometryAndMethod odom_msg;
-	odom_msg.odom.header = receivedMsg->header;
+	//odom_msg.odom.header = receivedMsg->header; FIXED, prendeva l'header sbagliato: così perdevo il reference al frame parent di scout odom
+	odom_msg.odom.header = receivedMsg->odom.header;
+	odom_msg.odom.header.frame_id = "est_odom"; //come da rep105 qui devo mettere l'odom fixed frame, che è static transformata risp la world frame
+/////////////////////////////
+//world-->map-->odom---dynTF--->base_link ( i primi 2 sono static transform, obv)
+///////////////////////
 	odom_msg.odom.pose.pose.position.x = x;
 	odom_msg.odom.pose.pose.position.y = y;
 	quaternion = tf::createQuaternionMsgFromYaw(theta);
@@ -88,8 +93,28 @@ void OdometryNode<geometry_msgs::TwistStamped, odometry::OdometryAndMethod, msg_
   	tf::Quaternion q;
   	q.setRPY(0, 0, theta);
   	transform.setRotation(q);
-  	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "world", "est_scout"));
+  	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "est_odom", "base_link"));
 
+  	//tf for visual wheel spinning
+  	/*tf::Quaternion q_wheels;
+  	q_wheels.setRPY(0, rpm_avg_l/60, 0);
+  	transform_fl.setOrigin( tf::Vector3(0.249, 0.29153, -0.0702) );
+  	transform_fl.setRotation(q_wheels);
+  	q_wheels.setRPY(0, rpm_avg_l/60, 0);
+  	transform_fr.setOrigin( tf::Vector3(0.249, -0.29153, -0.0702) );
+  	transform_fr.setRotation(q_wheels);
+  	q_wheels.setRPY(0, rpm_avg_r/60, 0);
+  	transform_rl.setOrigin( tf::Vector3(-0.249, 0.29153, -0.0702) );
+  	transform_rl.setRotation(q_wheels);
+  	q_wheels.setRPY(0, rpm_avg_r/60, 0);
+  	transform_rr.setOrigin( tf::Vector3(-0.249, -0.29153, -0.0702) );
+  	transform_rr.setRotation(q_wheels);
+  	
+  	br.sendTransform(tf::StampedTransform(transform_fl, ros::Time::now(), "base_link", "front_left_wheel_link"));
+	br.sendTransform(tf::StampedTransform(transform_fr, ros::Time::now(), "base_link", "front_right_wheel_link"));
+	br.sendTransform(tf::StampedTransform(transform_rl, ros::Time::now(), "base_link", "rear_left_wheel_link"));
+	br.sendTransform(tf::StampedTransform(transform_rr, ros::Time::now(), "base_link", "rear_right_wheel_link"));
+*/
 }
 
 

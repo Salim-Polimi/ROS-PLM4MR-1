@@ -1,6 +1,12 @@
 <launch>
-	<rosparam file="$(find param_estimation)/launch/parameters.yaml" />
+	
+	<node pkg="tf" type="static_transform_publisher" name="map_frame_broadcaster" args="0 0 0 0 0 0 world map 100" />
+	<node pkg="tf" type="static_transform_publisher" name="est_odom_frame_broadcaster" args="0 0 0 0 0 0 map est_odom 100" />
+	
+	<!-- al momento, il map frame coincide con world. L'odom frame è sì fisso, ma la sua posizione iniziale varia (come osservato dalle bag), quindi conviene impostare da parametro la sua pos iniziale -->
 
+
+	<rosparam file="$(find param_estimation)/launch/parameters.yaml" />
 
 	<node name="msg_filter" type="msg_filter" pkg="msg_filter" output="screen" />
 

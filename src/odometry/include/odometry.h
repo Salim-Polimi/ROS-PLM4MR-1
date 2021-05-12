@@ -38,6 +38,7 @@ class OdometryNode
 		double x;
 		double y;
 		double theta;
+
 		geometry_msgs::Quaternion quaternion;
 		// Speed estimation parameters
 		double y0;
@@ -115,4 +116,8 @@ class OdometryNode
 		// tf
 		tf::TransformBroadcaster br;
   		tf::Transform transform;
+  		tf::Transform transform_fl;
+  		tf::Transform transform_fr;
+  		tf::Transform transform_rl;
+  		tf::Transform transform_rr;
 };

@@ -3,6 +3,6 @@ y0: 0.51
 t_ratio: 0.025974
 initial_pose: {
   initial_x: 0.0,
-  initial_y: 0.0,
+  initial_y: -0.225,
   initial_theta: 0.0
 }
