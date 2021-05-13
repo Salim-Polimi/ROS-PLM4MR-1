@@ -27,7 +27,7 @@
    
    <param name="use_gui" value="false"/>
    
-   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+   <!--node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /-->
    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find scout_visualizer)/rviz/model_display_custom.rviz" />

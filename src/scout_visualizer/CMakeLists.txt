@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   nav_msgs
   msg_filter
+  sensor_msgs
 
 )
 
@@ -113,6 +114,7 @@ catkin_package(
   std_msgs
   nav_msgs
   msg_filter
+  sensor_msgs
 )#include "odometry/setResetOdom.h"
 
 

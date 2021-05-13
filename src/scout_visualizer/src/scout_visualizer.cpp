@@ -25,6 +25,33 @@ void VisualizerNode::gtPathSubCallback(const geometry_msgs::PoseStamped::ConstPt
   pubGtPath.publish(path);
 }
 
+void VisualizerNode::WheelSbinSubCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg)
+{
+  sensor_msgs::JointState jointmsg;
+  jointmsg.header = receivedMsg->header;
+  jointmsg.name = {"front_right_wheel","front_left_wheel", "rear_left_wheel", "rear_right_wheel"};
+
+  radS_fl = ((receivedMsg->rpm_fl)/60)*2*M_PI;
+  radS_fr = ((receivedMsg->rpm_fr)/60)*2*M_PI;
+  radS_rl = ((receivedMsg->rpm_rl)/60)*2*M_PI;
+  radS_rr = ((receivedMsg->rpm_rr)/60)*2*M_PI;
+  deltaT = 1/100.0;
+
+  //deltaT = receivedMsg->header.stamp - prev;
+  //prevT = receivedMsg->header.stamp;
+  angle_fl = angle_fl + radS_fl * deltaT;
+  angle_fr = angle_fr + radS_fr * deltaT;
+  angle_rl = angle_rl + radS_rl * deltaT;
+  angle_rr = angle_rr + radS_rr * deltaT;
+
+
+  //jointmsg.position =  {rpm_avg_r, rpm_avg_l, rpm_avg_l, rpm_avg_r} ;
+  //jointmsg.position =  {0.0, 0.0, 0.0, 0.0} ;
+  jointmsg.position =  {angle_fr, angle_fl, angle_rl, angle_rr};
+
+  pubWheelSbin.publish(jointmsg);
+}
+
 
 int main(int argc, char** argv) 
 {
