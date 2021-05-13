@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "scout_visualizer_node");
   
-  VisualizerNode Visualizer;
+  VisualizerNode Visualizer; 
 
 
   ros::Rate loop_rate(100); //100Hz
