@@ -35,10 +35,20 @@ void VisualizerNode::WheelSbinSubCallback(const msg_filter::SpeedAndOdom::ConstP
   radS_fr = ((receivedMsg->rpm_fr)/60)*2*M_PI;
   radS_rl = ((receivedMsg->rpm_rl)/60)*2*M_PI;
   radS_rr = ((receivedMsg->rpm_rr)/60)*2*M_PI;
-  deltaT = 1/100.0;
+  //deltaT = 1/100.0;
 
-  //deltaT = receivedMsg->header.stamp - prev;
-  //prevT = receivedMsg->header.stamp;
+  if (FirstExec==true) 
+  {
+    prevT = receivedMsg->header.stamp.toSec();
+    deltaT = 0.02; // a value of Ts that it's not far from the average
+    FirstExec = false;
+  }
+  else
+  {
+    deltaT = receivedMsg->header.stamp.toSec() - prevT;
+    prevT = receivedMsg->header.stamp.toSec();
+  }
+
   angle_fl = angle_fl + radS_fl * deltaT;
   angle_fr = angle_fr + radS_fr * deltaT;
   angle_rl = angle_rl + radS_rl * deltaT;

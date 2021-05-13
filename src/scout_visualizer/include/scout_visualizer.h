@@ -24,6 +24,8 @@ class VisualizerNode
 		double angle_rl = 0.0;
 		double angle_rr = 0.0;
 
+		bool FirstExec = true;
+
 
 
 		ros::NodeHandle n;
