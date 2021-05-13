@@ -76,6 +76,7 @@ void OdometryNode<geometry_msgs::TwistStamped, odometry::OdometryAndMethod, msg_
 	//odom_msg.odom.header = receivedMsg->header; FIXED, prendeva l'header sbagliato: così perdevo il reference al frame parent di scout odom
 	odom_msg.odom.header = receivedMsg->odom.header;
 	odom_msg.odom.header.frame_id = "est_odom"; //come da rep105 qui devo mettere l'odom fixed frame, che è static transformata risp la world frame
+	odom_msg.odom.child_frame_id = "base_link";
 /////////////////////////////
 //world-->map-->odom---dynTF--->base_link ( i primi 2 sono static transform, obv)
 ///////////////////////

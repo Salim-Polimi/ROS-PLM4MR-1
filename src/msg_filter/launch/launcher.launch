@@ -13,4 +13,9 @@
 	<!-- comment -->
 	
 	<node name="odometry" type="odometry" pkg="odometry" output="screen" />
+
+
+	<!--TEST -->
+	<node name="scout_visualizer" type="scout_visualizer" pkg="scout_visualizer" output="screen" />
+	
 </launch>

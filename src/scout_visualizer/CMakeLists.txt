@@ -8,12 +8,13 @@ project(scout_visualizer)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  msg_filter
+  geometry_msgs
   odometry
   roscpp
-  sensor_msgs
   std_msgs
   nav_msgs
+  msg_filter
+
 )
 
 ## System dependencies are found with CMake's conventions
@@ -107,11 +108,11 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 	CATKIN_DEPENDS
-    std_msgs
-    nav_msgs
-    msg_filter
-    odometry
-    sensor_msgs
+  geometry_msgs
+  odometry
+  std_msgs
+  nav_msgs
+  msg_filter
 )#include "odometry/setResetOdom.h"
 
 
