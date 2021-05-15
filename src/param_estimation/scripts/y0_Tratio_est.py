@@ -8,29 +8,44 @@ import numpy as np
 
 import tf
 
-bag = rosbag.Bag('./bag.bag')
-
-
 raggio = 0.1575
 
 M_PI = 3.14159265358979323846
 
-y0 = np.arange(0.514, 0.517, 0.001)
-t_ratio = np.arange(37.2, 37.5, 0.1)
+# BAG 1 
+# bag = rosbag.Bag('./bag1+odometry.bag')
+# y0 = np.arange(0.514, 0.517, 0.001)
+# t_ratio = np.arange(37.2, 37.5, 0.1)
+# pointLimit = 1550 # 1550 per fare fitting nella zona iniziale / 7000 totali
+# gt_limit = 6000 # 6000 per fare fitting nella zona iniziale / 18000 totali
 
+#BAG 2
+bag = rosbag.Bag('./bag2+odometry.bag')
+y0 = np.arange(0.40, 0.65, 0.05)
+t_ratio = np.arange(37.2, 37.3, 0.1)
+pointLimit = 1900 # 1900 per fare fitting nella zona iniziale / 3500 totali
+gt_limit = 9000 # 9000 totali e per fare fitting nella zona iniziale 
+
+# BAG 3
+# bag = rosbag.Bag('./bag3+odometry.bag')
+# y0 = np.arange(0.514, 0.515, 0.001)
+# t_ratio = np.arange(37.2, 37.3, 0.1)
+# pointLimit = 2750 # 2750 per fare fitting nella zona iniziale / 6000 totali
+# gt_limit = 9000 # 6000 per fare fitting nella zona iniziale / 14000 totali 
 
 gt_x_list = []
 gt_y_list = []
 odom_x_list_ref = []
 odom_y_list_ref = []
 
-pointLimit = 7000 # 1550 per fare fitting nella zona iniziale
-gt_limit = 18000 # 6000 per fare fitting nella zona iniziale
 
-print("\n!!! whoever is running this WATCH LINES 36 AND 44/45!!!")
 
+#print("\n!!! whoever is running this WATCH LINES 36 AND 44/45!!!")
+
+counterGT = 0
 FirstExec = True
 for msg in bag.read_messages(topics=['/gt_pose']):
+	counterGT += 1
 	if FirstExec:
 		initial_x = msg[1].pose.position.x
 		initial_y = msg[1].pose.position.y - 0.225 #offset notato sul grafico
@@ -41,13 +56,19 @@ for msg in bag.read_messages(topics=['/gt_pose']):
 print("\nINITIAL VALUES: \n x= {} \n y= {}".format(initial_x, initial_y))
 euler = tf.transformations.euler_from_quaternion(quaternion)
 #print("ORIENTATION: \nroll= {} \npitch= {} \nyaw= {}".format(euler[0], euler[1], euler[2]))
-#initial_theta = euler[2]	# this is the right command
-initial_theta = -euler[2] 	# this is the workaround, without "-" the odometry starts opposite to gt_pose and i don't know why
-print(" theta= {}".format(initial_theta))
+initial_theta = euler[2]	# this is the right command
+#initial_theta = -euler[2] 	# this is the workaround, without "-" the odometry starts opposite to gt_pose and i don't know why
+print(" theta= {} \n".format(initial_theta))
+#print("counterGT = {}".format(counterGT))
 
-for msg in bag.read_messages(topics=['/scout_odom']):
-    odom_x_list_ref.append(msg[1].pose.pose.position.x)
-    odom_y_list_ref.append(msg[1].pose.pose.position.y)
+counterSC = 0
+for msg in bag.read_messages(topics=['/sync_msgs']):
+	counterSC += 1
+	odom_x_list_ref.append(msg[1].odom.pose.pose.position.x)
+	odom_y_list_ref.append(msg[1].odom.pose.pose.position.y)
+
+#print("counterSC = {}".format(counterSC))
+
 
 counter = 1
 for j in range(len(t_ratio)):
@@ -61,7 +82,9 @@ for j in range(len(t_ratio)):
 		FirstExec = True
 		odom_x_list = []
 		odom_y_list = []
+		counterEST = 0
 		for msg in bag.read_messages(topics=['/sync_msgs']):
+			counterEST += 1
 		   	rpm_avg_l = - (msg[1].rpm_fl + msg[1].rpm_rl)/2
 			rpm_avg_r = (msg[1].rpm_fr + msg[1].rpm_rr)/2
 			Vl_m = (rpm_avg_l*2*M_PI*raggio)/60
@@ -83,18 +106,13 @@ for j in range(len(t_ratio)):
 			theta = theta + omega_z*Ts
 			odom_x_list.append(x)
 			odom_y_list.append(y)
-		# fig, (plot1, plot2) = plt.subplots(1, 2, sharex=True, sharey=True)
-		# fig.suptitle('y0 = {}'.format(y0[i]))
+
+		#print("counterEST = {}".format(counterEST))
 		
 		plt.scatter(odom_x_list[:pointLimit],odom_y_list[:pointLimit], s=0.5, label='y0={}'.format(y0[i]))
 		
-
-		
-		# plot2.set_title('est_odom(R) vs gt_pose(B)')
-		# plot2.plot(odom_x_list[:pointLimit],odom_y_list[:pointLimit], color='red')
-		# plot2.plot(gt_x_list[:pointLimit],gt_y_list[:pointLimit], color='blue')
-		# plot2.grid(color='gainsboro', linestyle='-')
 	plt.scatter(gt_x_list[:gt_limit],gt_y_list[:gt_limit], s=0.5, label='gt_pose')
+	#plt.scatter(odom_x_list_ref[:pointLimit],odom_y_list_ref[:pointLimit], s=0.5, label='scout')
 	plt.legend()
 	plt.title('t_ratio = {}'.format(t_ratio[j]))
 
@@ -104,15 +122,3 @@ for j in range(len(t_ratio)):
 plt.show()
 
 bag.close()
-
-
-
-
-#for i in range(pointLimit):
-#    if gt_x_list[i] == gt_x_list[i-1]:
-#        gt_x_list[i-1] = "NULL"
-#    print len(gt_x_list)
-
-
-
-
