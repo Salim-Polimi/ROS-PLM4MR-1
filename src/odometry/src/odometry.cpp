@@ -75,7 +75,7 @@ void OdometryNode<geometry_msgs::TwistStamped, odometry::OdometryAndMethod, msg_
 	odometry::OdometryAndMethod odom_msg;
 	//odom_msg.odom.header = receivedMsg->header; FIXED, prendeva l'header sbagliato: così perdevo il reference al frame parent di scout odom
 	odom_msg.odom.header = receivedMsg->odom.header;
-	odom_msg.odom.header.frame_id = "odom"; //come da rep105 qui devo mettere l'odom fixed frame, che è static transformata risp la world frame
+	odom_msg.odom.header.frame_id = "est_odom"; //come da rep105 qui devo mettere l'odom fixed frame, che è static transformata risp la world frame
 	odom_msg.odom.child_frame_id = "base_link";
 /////////////////////////////
 //world-->map-->odom---dynTF--->base_link ( i primi 2 sono static transform, obv)
@@ -94,7 +94,7 @@ void OdometryNode<geometry_msgs::TwistStamped, odometry::OdometryAndMethod, msg_
   	tf::Quaternion q;
   	q.setRPY(0, 0, theta);
   	transform.setRotation(q);
-  	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "odom", "base_link"));
+  	br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "est_odom", "base_link"));
 
   	//tf for visual wheel spinning
   	/*tf::Quaternion q_wheels;

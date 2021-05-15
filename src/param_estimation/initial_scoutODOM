@@ -1,0 +1,47 @@
+BAG 1:
+	position
+		x: 0
+		y: 0
+		z: 0
+	orientation
+		x: 0
+		y: 0
+		z: 0
+		w:  1
+		[RAD]	
+		roll: 0
+		pitch: 0
+		yaw: 0
+BAG 2:
+	position
+		x: -2.811327
+		y:  0.784712
+		z:  0.0
+	orientation
+		x: 0.0
+		y: 0.0
+		z:  0.999037
+		w:  0.043885
+		[RAD]	
+		roll: 0
+		pitch: 0
+		yaw: 3.0537945
+
+BAG 3:
+	position
+		x: -2.286034
+		y: -1.444192
+		z:  0.0
+	orientation
+		x:  0
+		y:  0
+		z:  0.790465
+		w: -0.612507
+		[RAD]	
+		roll: 0.
+		pitch: 0
+		yaw: -1.8231359
+
+
+
+

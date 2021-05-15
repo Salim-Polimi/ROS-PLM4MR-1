@@ -48,7 +48,7 @@
             </geometry>
         </collision>
     </link>
-
+<!--
     <link name="base_footprint"/>
 
     <joint name="base_footprint_joint" type="fixed">
@@ -70,7 +70,7 @@
         <parent link="base_link" />
         <child link="inertial_link" />
     </joint>
-
+-->
     <!-- Scout wheel macros -->
     <!-- wheel labeled from 0 to 3, conter-clockwise, starting from front right wheel -->
     <!-- motor 1 and 2 (left side) are mechanically installed in a reversed direction -->

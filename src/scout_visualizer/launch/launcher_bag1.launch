@@ -10,7 +10,10 @@
 	<!-- <node pkg="tf" type="static_transform_publisher" name="est_odom_frame_broadcaster" args="-0.832142 0.426362 0.324720 1.125459 -0.0413269 0.026355 map est_odom 100" /> -->
 
 	<!-- MODDATO: y = y-0.225, roll= pitch = 0 -->
-	<node pkg="tf" type="static_transform_publisher" name="odom_frame_broadcaster" args="-0.832142 0.201362 0.324720 1.125459 0 0 map odom 100" /> 							
+	<node pkg="tf" type="static_transform_publisher" name="est_odom_frame_broadcaster" args="-0.832142 0.201362 0.324720 1.125459 0 0 map est_odom 100" /> 	
+
+	<!-- MODDATO: roll= pitch = 0 -->
+	<node pkg="tf" type="static_transform_publisher" name="odom_frame_broadcaster" args="-0.832142 0.426362 0.324720 1.125459 0 0 map odom 100" />
 
 	<!-- frame odom a cui è riferita scout odom-->
 	<!--node pkg="tf" type="static_transform_publisher" name="odom_frame_broadcaster" args="0 0 0 0 0 0 map odom 100" /-->

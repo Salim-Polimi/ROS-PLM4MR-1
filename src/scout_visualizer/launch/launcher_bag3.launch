@@ -10,7 +10,15 @@
 	<!-- <node pkg="tf" type="static_transform_publisher" name="est_odom_frame_broadcaster" args="-0.852457 0.067624 0.322794 -1.2462197 0.0132052 0.0754503 map est_odom 100" /> -->
 	
 	<!-- MODDATO: roll= pitch = 0 -->
-	<node pkg="tf" type="static_transform_publisher" name="odom_frame_broadcaster" args="-0.852457 0.067624 0.322794 -1.2462197 0 0 map odom 100" />
+	<node pkg="tf" type="static_transform_publisher" name="est_odom_frame_broadcaster" args="-0.852457 0.067624 0.322794 -1.2462197 0 0 map est_odom 100" />
+
+	<!-- MODDATO: roll= pitch = 0, 
+		 spostata partenza di scoutododm per coincidere con GTpose 
+		 yaw = - yaw_scout + yaw_gt
+		 x = (x_gt - x_scout*cos(yaw) + y_scout*sin(yaw)) / cos(yaw)
+		 y = (y_gt - y_scout*cos(yaw) + x_scout*sin(yaw)) / sin(yaw) 
+	-->
+	<node pkg="tf" type="static_transform_publisher" name="odom_frame_broadcaster" args="0.3291260853 4.629219795 0.322794 0.5769162 0 0 map odom 100" />
 
 
 	<!-- frame odom a cui è riferita scout odom-->
