@@ -72,9 +72,9 @@ void OdometryNode<geometry_msgs::TwistStamped, odometry::OdometryAndMethod, msg_
 	// Odometry message construction
 	odometry::OdometryAndMethod odom_msg;
 	odom_msg.odom.header = receivedMsg->odom.header;
-	odom_msg.odom.header.frame_id = "odom"; //come da rep105 qui devo mettere l'odom fixed frame, che è static transformata risp la world frame
+	odom_msg.odom.header.frame_id = "odom"; 
 	odom_msg.odom.child_frame_id = "base_link";
-	//world-->map-->odom---dynTF--->base_link ( i primi 2 sono static transform, obv)
+	//world-->map-->odom---dynTF--->base_link 
 	
 	odom_msg.odom.pose.pose.position.x = x;
 	odom_msg.odom.pose.pose.position.y = y;
