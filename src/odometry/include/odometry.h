@@ -17,10 +17,12 @@
 
 #include <tf/transform_broadcaster.h>
 
+
 template<typename PubType, typename PubType2, typename SubType>
 class OdometryNode
 {
 	public:
+		
 		// Motor to velocities computation variables
 		double omega_z;
 	 	double Vx;
@@ -30,7 +32,13 @@ class OdometryNode
 		double Vr_m;
 		double Vl_r;
 		double Vr_r;
+
 		geometry_msgs::TwistStamped twist_msg;
+
+		// Speed estimation parameters
+		double y0;
+		double t_ratio;
+
 		// integration variables
 		double receivedTime;
 		double previousTime;
@@ -38,17 +46,16 @@ class OdometryNode
 		double x;
 		double y;
 		double theta;
-
-		geometry_msgs::Quaternion quaternion;
-		// Speed estimation parameters
-		double y0;
-		double t_ratio;
-		// Integration method string
-		std_msgs::String method;
-
 		double Ts;
 		bool FirstExec;
 		int int_method;
+
+		geometry_msgs::Quaternion quaternion;
+		
+		// Integration method string
+		std_msgs::String method;
+
+		
 
 		OdometryNode() {}
 
@@ -62,21 +69,6 @@ class OdometryNode
 			n.getParam("/raggio", raggio);
 			n.getParam("/y0", y0);
 			n.getParam("/t_ratio", t_ratio);
-
-			
-			// initial conditions for the integration
-			
-			/* DEBUG
-			if(n.getParam("/initial_pose/initial_x", x))
-			{
-				ROS_INFO("x=%f", x);
-			}
-			else
-			{
-				ROS_INFO("errore x=%f", x);
-			}
-			*/
-
 			n.getParam("/initial_pose/initial_x", x);
 			n.getParam("/initial_pose/initial_y",y);
 			n.getParam("/initial_pose/initial_theta", theta);
@@ -100,7 +92,9 @@ class OdometryNode
 		void responseCallback(odometry::paramConfig &config, uint32_t level);
 
 	protected:
+
 		ros::NodeHandle n;
+
 		ros::Subscriber subscriber;
 		ros::Publisher twist_publisher;
 		ros::Publisher odometry_publisher;

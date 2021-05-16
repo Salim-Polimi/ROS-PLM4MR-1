@@ -1,10 +1,7 @@
 <launch>
 	<rosparam file="$(find param_estimation)/launch/parameters.yaml" />
 
-
 	<node name="msg_filter" type="msg_filter" pkg="msg_filter" output="screen" />
-
-	<!-- comment -->
 	
 	<node name="param_estimation" type="param_estimation" pkg="param_estimation" output="screen" /> 
 </launch>
