@@ -1,0 +1,144 @@
+﻿Perception, Localization and Mapping for Mobile Robots - Project 1.
+
+
+TEAM MEMBERS:
+10633262 Nicolas Martinelli
+10640808 Matteo Molinari
+10581965 Salim Msaad
+
+
+
+
+ARCHIVE CONTENT - DESCRIPTION
+
+
+robotics_hw1:
+Package that contains the custom message “MotorSpeed” used in the provided ros bags.
+
+
+msg_filter:
+Package that focuses on synchronizing the messages of the motors speed and manufacturer odometry into a custom message (SpeedAndOdom) published on the topic “sync_msgs”, to be used later by other nodes.
+
+
+param_estimation:
+Package in charge of evaluating “t_ratio” and “y0”, it then publishes them on the topic “param_estimation” as a custom message “Estimation”.
+It also contains a python script ("y0_estOpt.py") used to fulfil the “optional goal”.
+
+
+odometry:
+Package that fulfills the goal of computing the odometry of the robot, using approximate skid kinematics.
+It can:        
+Change the integration method via dynamic reconfigure;
+Set the odometry current values to a given pose x, y, theta;
+Reset the odometry to 0,0,0.
+The results of the calculation and the chosen integration method are published in the topic “est_odometry” as a custom message “OdometryAndMethod”, as requested by goal IV.
+                
+scout_visualizer:
+Generates the necessary data structure for rviz (it extrapolates nav_msgs/Odometry data from our custom msgs and generates paths from ground truth poses).
+It contains the configuration of rviz to visualize the 3D model of Scout®, retrieved from the Agilex git-hub page.
+Its only goal is to give a visual representation of all the useful data, so that a comparison can be easily made.
+
+
+
+
+
+
+
+
+ROS PARAMETERS
+
+
+---"classic rosparams"
+raggio: radius of each wheel;
+y0: apparent half-baseline of the robot (estimated offline using the data collected);
+t_ratio: transmission ratio between motors and wheels (tuned for the current surface offline using the data collected);
+initial_pose: initial pose of the robot, containing an initial_x, an initial_y and an initial_theta, in the est_odom reference frame.
+
+
+---dynamic reconfigure parameters:
+using rqt_reconfigure node it's possible to choose the integration method used by the odometry node:   
+0 = Euler(default);                                                                        
+1 = Runge-Kutta.
+
+
+STRUCTURE OF THE TF-TREE:
+- world:
+        - map:
+                - odom:
+                        - base_link:
+                                - front_left_wheel_link
+                                - front_right_wheel_link
+                                - rear_left_wheel_link
+                                - rear_right_wheel_link
+
+
+CUSTOM MESSAGES:
+
+
+MotorSpeed: 
+custom msg provided by the manufacturer, located in the package robotics_hw1. Contains two data objects, a header and the speed of the motor expressed in rpm
+-structure:
+Header header
+float64 rpm
+
+
+SpeedAndOdom: 
+custom msg used for the synchronised msgs, located in the package msg_filter.
+Contains six data objects, a header, the speed of each motor expressed in rpm (four in total) and an odometry message of type nav_msgs/Odometry.
+-structure:        
+Header header
+float64 rpm_fl
+float64 rpm_fr
+float64 rpm_rl
+float64 rpm_rr
+nav_msgs/Odometry odom
+
+
+Estimation: 
+custom msg used to publish in a single topic the estimated t_ratio and y0 calculated at each SpeedAndOdom msg received.
+Contains three data objects, a header, a float for t_ratio and another float for y0.
+-structure: 
+Header header
+float64 t_ratio
+float64 y0
+
+
+OdometryAndMethod: 
+custom msg used to publish both the estimated odometry and the method used in the estimation in a single msg (as requested by Goal IV).
+Contains two data objects, a nav_msgs/Odometry and a std_msgs/String.
+-structure: 
+nav_msgs/Odometry odom
+std_msgs/String method
+
+
+HOW TO START/USE THE NODES:
+(you can change the initial pose rosparams by editing odometry/launch/parameters.yaml)
+a) $ roslaunch odometry launcher.launch;
+b) run the bag;
+c) echo to topics: est_odometry or use plotjuggler to visualize it.
+d) you can use rqt_dynamic reconfigure to change the integration method
+e) you can use the 
+ $ rosservice call /setOdom x y theta
+ $ rosservice call /resetOdom.
+
+
+We made available other launch files which can be used in order to have a clear view on what’s going on, or accomplish specific sub-tasks:
+1. Estimate t_ratio and y0 from manufacturer’s odometry:
+ a) $ roslaunch param_estimation launcher.launch
+ b) use any plotting software to plot “t_ratio” and “y0” from the messages on the topic “param_estimation” (e.g. plotjuggler). You can then estimate a value for “t_ratio” and “y0” observing the plot.
+2. Visualize the comparison between the “estimated odometry”, “manufacturer’s odometry” and “Optitrack’s odometry” on RVIZ:
+ $ roslaunch scout_visualizer launcher_bag1.launch or
+ $ roslaunch scout_visualizer launcher_bag2.launch or
+ $ roslaunch scout_visualizer launcher_bag3.launch
+then playback the relative bag with $ rosbag play --clock bag*.bag .
+
+
+INFO/IMPORTANT INSIGHTS
+1) Estimation of y0 and t_ratio using OptiTrack data (Optional Goal)
+Estimation of y0 and t_ratio from OptiTrack is accomplished by plotting odometries starting from the data in the bags (and the parameters estimated from the internal robot odometry), for a range of values of both y0 and t_ratio, and evaluating the best overlapping odometry (w.r.t. the real pose) each time.
+By iterating, the range is progressively restricted around the most promising values, until the result isn't affected visibly.
+We focused more on fitting the beginning of the curves since, with each iteration, the approximation error keeps increasing.
+Considering the use of approximate kinematics and that y0 is a parameter that depends on the surface type, in our point of view this estimating method shouldn't contribute significantly to the uncertainty of the estimate.
+
+2) About the scout_visualizer package
+It has three different launch files, one for each bag, because every bag needs different initial parameters (which we set in the three corresponding yaml files).
