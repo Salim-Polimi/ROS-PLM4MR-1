@@ -1,0 +1,10 @@
+raggio: 0.1575
+#calibrate solo su bag1
+y0: 0.514
+t_ratio: 0.0268817204 #1/37.2 rapporto di trasmissione
+
+initial_pose: {
+  initial_x: -2.811327,
+  initial_y: 0.784712,
+  initial_theta: 3.0537945
+}

@@ -1,0 +1,128 @@
+Perception, Localization and Mapping for Mobile Robots - Project 1.
+
+TEAM MEMBERS:
+10633262 Nicolas Martinelli
+10640808 Matteo Molinari
+10581965 Salim Msaad
+
+
+ARCHIVE CONTENT - DESCRIPTION
+
+robotics_hw1:
+Package that contains the custom message “MotorSpeed” used in the provided ros bags.
+
+msg_filter:
+Package that focuses on synchronizing the messages of the motors speed and manufacturer odometry into a custom message (SpeedAndOdom) published on the topic “sync_msgs”, to be used later by other nodes.
+
+param_estimation:
+Package in charge of evaluating “t_ratio” and “y0”, it then publishes them on the topic “param_estimation” as a custom message “Estimation”.
+We then used plotjuggler see which values were more fitting.
+It also contains a python script ("y0_estOpt.py") used to fulfil the “optional goal” of using the ground truth pose to calibrate t_ratio and y0:
+since data from sensors is retrieved in different ways (burst(gt_pose) vs. a more regular acquiring), this is accomplished
+by plotting odometries starting from the data in the bags (and the parameters estimated from the internal robot odometry), for a range of values of both y0 and t_ratio, and evaluating the best overlapping odometry (w.r.t. the real pose) each time.
+By iterating, the range is progressively restricted around the most promising value, until the result isn't affected visibly by choosing any of the values in that range;
+of course the fitting of the points closer to the begin of the odometry is weighted more than the one of the further points.
+This visual manner to carry out the estimate makes it easy to account for the "bursty" output of the OptiTrack (loosing the time reference, we can't carry out the estimate in a white box fashion) and for when data isn't available (occlusions).
+Considering the use of approximate kinematics and the fact that y0 is a parameter that depends also on the surface type, in our point of view this estimating method shouldn't contribute significantly to the uncertainty of the estimate.
+
+
+
+
+odometry:
+Package that fulfills the goal of computing the odometry of the robot, using skid approximate kinematics.
+It can:	Change the integration method via dynamic reconfigure
+It makes available services to:
+		Set the odometry current values to a given pose x, y, theta;
+		Reset the odometry to 0,0,0.
+
+The results of the calculation and the chosen integration method are published in the topic “est_odometry” as a custom message “OdometryAndMethod”, as requested.
+		
+scout_visualizer:
+This package helped us generate the necessary data structure for rviz (it extrapolates nav_msgs/Odometry data from our custom msgs and generates paths from ground truth poses).
+It contains the configuration of rviz to visualize the 3D model of Scout®, retrieved from the Agilex git-hub page.
+It's only goal is to give a visual representation of all the useful data, so that a comparison can be easily made.
+On the display tab of rviz is possible to show/hide the paths (our odometry, scout_odom, gt_pose).
+
+
+
+
+
+
+
+
+ROS PARAMETERS
+
+---"classic rosparams"
+raggio: radius of each wheel;
+y0: apparent half-baseline of the robot (estimated offline using the data collected);
+t_ratio: transmission ratio between motors and wheels (tuned for the current surface offline using the data collected);
+initial_pose: initial pose of the robot, containing an initial_x, an initial_y and an initial_theta, in the est_odom reference frame.
+
+
+- Structure of the TF tree
+
+world-----> map |--------> est_odom ------> base_link 	|------>front_left_wheel_link
+				|--------> odom 						|----->front_right_wheel_link
+														|------>rear_left_wheel_link
+														|------>rear_right_wheel_link
+
+*the use of two different odometry frames is made necessary by the need of visualizing the robot path from the same starting point, making it easy to do a comparison.
+	We think this is due to the fact that during the recording of the different bags, robot internal odometry hasn't been reset, and so we need to compensate with an offset on its reference frame, to align the path with with ours, and gt_pose.
+
+*************++++++ e se cambiassimo con i vari launchfile caricassimo un yaml diverso con lo sfasamento iniziale? così abbiamo lo stesso ref frame.
+ 
+---dynamic reconfigure parameters:
+	using rqt_reconfigure node it's possible to choose the integration method used by the odometry node: 0 = Euler(default); 
+																										 1 = Runge-Kutta.
+
+
+
+CUSTOM MESSAGES:
+
+MotorSpeed: custom msg provided by the manufacturer, located in the package robotics_hw1. Contains two data objects, a header and the speed of the motor expressed in rpm
+		-structure:	Header header
+					float64 rpm
+
+
+SpeedAndOdom: custom msg used for the synchronised msgs, located in the package msg_filter.
+Contains six data objects, a header, the speed of each motor expressed in rpm (four in total) and an odometry message of type nav_msgs/Odometry.
+		-structure:	Header header
+					float64 rpm_fl
+					float64 rpm_fr
+					float64 rpm_rl
+					float64 rpm_rr
+					nav_msgs/Odometry odom
+
+
+
+Estimation: custom msg used to publish in a single topic the estimated t_ratio and y0 calculated at each SpeedAndOdom msg received.
+Contains three data objects, a header, a float for t_ratio and another float for y0.
+		-structure: Header header
+					float64 t_ratio
+					float64 y0
+
+
+
+
+OdometryAndMethod: custom msg used to publish both the estimated odometry and the method used in the estimation in a single msg (as requested by Goal IV).
+Contains two data objects, a nav_msgs/Odometry and a std_msgs/String.
+		-structure: nav_msgs/Odometry odom
+					std_msgs/String method
+
+
+HOW TO USE THE NODES:
+There are three launch files: 
+msg_filter/launch/launcher.launch
+scout_visualizer/launch/launcher_bag1.launch
+scout_visualizer/launch/launcher_bag2.launch
+scout_visualizer/launch/launcher_bag3.launch
+
+The last three launchfiles initialize all parameters (which can be edited in param_estimation/launch/parameters.yaml), sets the static frames,
+fires all the requested nodes (msg_filter, odometry), loads the configuration for RVIZ and finally launches it, in order to have a visual feedback of the nodes work.
+Then, launch the related ros bag, using the --clock flag.
+You can then change the integration method with rqt_reconfigure or set/reset odometry via the provided services.
+
+- Info you think are important / interesting
+	mettere	flow dei dati (rqt_graph versione ASCII)
+
+sfasamento dovuto a robot non centrato
