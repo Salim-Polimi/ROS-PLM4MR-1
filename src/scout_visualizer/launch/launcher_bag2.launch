@@ -6,32 +6,18 @@
 	<!-- template -->
 	<!-- <node pkg="tf" type="static_transform_publisher" name="" args="x y z yaw pitch roll father_frame child_frame 100" /> -->
 
-	<!-- OG -->
-	<!-- <node pkg="tf" type="static_transform_publisher" name="est_odom_frame_broadcaster" args="-0.486400 0.442696 0.577919 2.023332 -0.4055424 -0.1376539 map est_odom 100" /> -->
-	
-	<!-- MODDATO: roll= pitch = 0 -->
 
-<!--- FINAL ! stssa odom frame, ma iniizalizzo la nostra odometry con il valore iniziale di scout odum, caricando parametri diversi-->
+	<!-- Iniizalizzo il frame odom rototraslato di un valore tale da permettere di avere l'origine dell' odometria in comune con gt_pose-->
 	<node pkg="tf" type="static_transform_publisher" name="odom_frame_broadcaster" args="0.2868896956 -2.371794268 0.577919 -1.0304625 0 0 map odom 100" />
-	<!-- MODDATO: roll= pitch = 0, 
-		 spostata partenza di scoutododm per coincidere con GTpose 
-		 yaw = - yaw_scout + yaw_gt
-		 x = (x_gt - x_scout*cos(yaw) + y_scout*sin(yaw)) / cos(yaw)
-		 y = (y_gt - y_scout*cos(yaw) + x_scout*sin(yaw)) / sin(yaw) 
-	-->
-
-
-	<!-- frame odom a cui è riferita scout odom-->
-	<!--node pkg="tf" type="static_transform_publisher" name="odom_frame_broadcaster" args="0 0 0 0 0 0 map odom 100" /-->
-
-	<!-- al momento, il map frame coincide con world. L'odom frame è sì fisso, ma la sua posizione iniziale varia (come osservato dalle bag), quindi conviene impostare da parametro la sua pos iniziale -->
-
-	<rosparam file="$(find param_estimation)/launch/parameters_bag2.yaml" />
+	<!-- MODDATO: roll= pitch = 0, -->
+	
+<!---Carico i parametri iniziali relativi alla bag, così da avere l'origine di scout_odom ed est_odom coincidente-->
+	<rosparam file="$(find scout_visualizer)/launch/parameters_bag2.yaml" />
 	<param name="use_sim_time" value="true" />
 
 	<node name="msg_filter" type="msg_filter" pkg="msg_filter" output="screen" />
 	<node name="odometry" type="odometry" pkg="odometry" output="screen" />
-	<!-- comment -->
+
 	
 	
 	<node name="scout_visualizer" type="scout_visualizer" pkg="scout_visualizer" output="screen" />
@@ -43,10 +29,8 @@
 
    
    <param name="robot_description" command="$(find xacro)/xacro $(arg model_xacro)"/>
+
    
-   <param name="use_gui" value="false"/>
-   
-   <!--node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" /-->
    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find scout_visualizer)/rviz/model_display_custom.rviz" />

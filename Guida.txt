@@ -61,10 +61,10 @@ initial_pose: initial pose of the robot, containing an initial_x, an initial_y a
 
 - Structure of the TF tree
 
-world-----> map |--------> est_odom ------> base_link 	|------>front_left_wheel_link
-				|--------> odom 						|----->front_right_wheel_link
-														|------>rear_left_wheel_link
-														|------>rear_right_wheel_link
+world-----> map |--------> odom ------> base_link |------>front_left_wheel_link
+						  |----->front_right_wheel_link
+						  |------>rear_left_wheel_link
+						  |------>rear_right_wheel_link
 
 *the use of two different odometry frames is made necessary by the need of visualizing the robot path from the same starting point, making it easy to do a comparison.
 	We think this is due to the fact that during the recording of the different bags, robot internal odometry hasn't been reset, and so we need to compensate with an offset on its reference frame, to align the path with with ours, and gt_pose.
