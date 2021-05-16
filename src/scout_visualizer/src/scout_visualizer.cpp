@@ -1,7 +1,6 @@
 #include <scout_visualizer.h>
 
 
-
 void VisualizerNode::estOdomSubCallback(const odometry::OdometryAndMethod::ConstPtr& receivedMsg) 
 {
    nav_msgs::Odometry onlyEstOdom;
@@ -35,12 +34,11 @@ void VisualizerNode::WheelSbinSubCallback(const msg_filter::SpeedAndOdom::ConstP
   radS_fr = ((receivedMsg->rpm_fr)/60)*2*M_PI;
   radS_rl = ((receivedMsg->rpm_rl)/60)*2*M_PI;
   radS_rr = ((receivedMsg->rpm_rr)/60)*2*M_PI;
-  //deltaT = 1/100.0;
 
   if (FirstExec==true) 
   {
     prevT = receivedMsg->header.stamp.toSec();
-    deltaT = 0.02; // a value of Ts that it's not far from the average
+    deltaT = 0.02; // a value that it's not far from the average
     FirstExec = false;
   }
   else
@@ -54,9 +52,6 @@ void VisualizerNode::WheelSbinSubCallback(const msg_filter::SpeedAndOdom::ConstP
   angle_rl = angle_rl + radS_rl * deltaT;
   angle_rr = angle_rr + radS_rr * deltaT;
 
-
-  //jointmsg.position =  {rpm_avg_r, rpm_avg_l, rpm_avg_l, rpm_avg_r} ;
-  //jointmsg.position =  {0.0, 0.0, 0.0, 0.0} ;
   jointmsg.position =  {angle_fr, angle_fl, angle_rl, angle_rr};
 
   pubWheelSbin.publish(jointmsg);

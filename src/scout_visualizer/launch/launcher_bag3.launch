@@ -6,19 +6,16 @@
 	<!-- template -->
 	<!-- <node pkg="tf" type="static_transform_publisher" name="" args="x y z yaw pitch roll father_frame child_frame 100" /> -->
 
-
-	
-	<!-- MODDATO: roll= pitch = 0 -->
-	<!-- Iniizalizzo il frame odom rototraslato di un valore tale da permettere di avere l'origine dell' odometria in comune con gt_pose-->
+	<!-- Inizializzo il frame odom rototraslato di un valore tale da permettere di avere l'origine dell' odometria in comune con gt_pose-->
 	<node pkg="tf" type="static_transform_publisher" name="odom_frame_broadcaster" args="0.275856589 2.524970216 0.322794 0.5769162 0 0 map odom 100" />
-
 	
-	<!---Carico i parametri iniziali relativi alla bag, così da avere l'origine di scout_odom ed est_odom coincidente-->
+	<!-- Carico i parametri iniziali -->
 	<rosparam file="$(find scout_visualizer)/launch/parameters_bag3.yaml" />
 	<param name="use_sim_time" value="true" />
 
 	<node name="msg_filter" type="msg_filter" pkg="msg_filter" output="screen" />
 	<node name="odometry" type="odometry" pkg="odometry" output="screen" />
+	
 
 	<node name="scout_visualizer" type="scout_visualizer" pkg="scout_visualizer" output="screen" />
 
@@ -26,16 +23,11 @@
 	<!--modello 3d di scout-->
 
 	<arg name = "model_xacro" default = "$(find scout_visualizer)/urdf/scout_v2.xacro" />
-
    
-   <param name="robot_description" command="$(find xacro)/xacro $(arg model_xacro)"/>
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model_xacro)"/>
 
-   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
-   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find scout_visualizer)/rviz/model_display_custom.rviz" />
-
-
-
-
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find scout_visualizer)/rviz/model_display_custom.rviz" />
 
 </launch>

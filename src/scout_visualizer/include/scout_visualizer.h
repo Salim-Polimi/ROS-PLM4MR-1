@@ -7,12 +7,14 @@
 #include <nav_msgs/Odometry.h>
 #include <sensor_msgs/JointState.h>
 #include "math.h"
+
 #define M_PI 3.14159265358979323846
 
 
 class VisualizerNode
 {
 	protected:
+
 		double radS_fl = 0.0;
 		double radS_fr = 0.0;
 		double radS_rl = 0.0;
@@ -26,8 +28,6 @@ class VisualizerNode
 
 		bool FirstExec = true;
 
-
-
 		ros::NodeHandle n;
 
 		ros::Subscriber subEstOdom;
@@ -39,10 +39,9 @@ class VisualizerNode
 		ros::Publisher pubScoutOdom;
 		ros::Publisher pubGtPath;
 		ros::Publisher pubWheelSbin;
+
 	public:
 		
-		
-
 		VisualizerNode()
 		{
 			pubEstOdom = n.advertise<nav_msgs::Odometry>("est_odom_visual", 1);
@@ -56,13 +55,10 @@ class VisualizerNode
 			subWheelSbin = n.subscribe<msg_filter::SpeedAndOdom>("sync_msgs", 1, &VisualizerNode::WheelSbinSubCallback, this);
 		}
 
-		
 
 		void estOdomSubCallback(const odometry::OdometryAndMethod::ConstPtr& receivedMsg);
 		void scoutOdomSubCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg);
 		void gtPathSubCallback(const geometry_msgs::PoseStamped::ConstPtr& receivedMsg);
 		void WheelSbinSubCallback(const msg_filter::SpeedAndOdom::ConstPtr& receivedMsg);
-	
-
 
 };

@@ -1,9 +1,0 @@
-<launch>
-	
-	<rosparam file="$(find param_estimation)/launch/parameters.yaml" />
-
-	<node name="msg_filter" type="msg_filter" pkg="msg_filter" output="screen" />
-	
-	<node name="odometry" type="odometry" pkg="odometry" output="screen" />
-	
-</launch>
